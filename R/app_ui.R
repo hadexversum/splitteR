@@ -9,11 +9,28 @@ app_ui <- function(request) {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic
+    sidebarLayout(
+    sidebarPanel(
     fluidPage(
-      mod_input_data_ui("input_data")
-      
+        mod_input_data_ui("input_data"),
+        mod_split_settings_ui("split_settings")
+      )
+      )
+  ,
+      mainPanel(
+      fluidPage(
+        # h1("main"),
+        mod_coverage_plots_ui("coverage_plots")
+        
     )
-  )
+    )
+    )
+  ,
+      
+    includeCSS(path = app_sys("app/utils/datatable.css")),
+    includeCSS(path = app_sys("app/utils/selectize.css"))
+    
+    )
 }
 
 #' Add external Resources to the Application
@@ -29,15 +46,19 @@ golem_add_external_resources <- function() {
     "www",
     app_sys("app/www")
   )
+  add_resource_path(
+    "utils",
+    app_sys("app/utils")
+  )
 
   tags$head(
     favicon(),
     bundle_resources(
       path = app_sys("app/www"),
       app_title = "splitteR"
-    )
+    ),
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
-    
+    golem::activate_js()
   )
 }

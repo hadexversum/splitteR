@@ -6,5 +6,7 @@
 #' @noRd
 app_server <- function(input, output, session) {
   # Your application server logic
-  mod_input_data_server("input_data")
+  dat <- mod_input_data_server("input_data")
+  
+  mod_coverage_plots_server("coverage_plots", dat = dat)
 }

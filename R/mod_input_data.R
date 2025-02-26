@@ -10,6 +10,10 @@
 mod_input_data_ui <- function(id) {
   ns <- NS(id)
   tagList(
+    
+    # hadex_tab_plot(
+    #   title = "Input data",
+      
     wellPanel(
       fillRow(
         flex = c(NA, 1),
@@ -28,9 +32,12 @@ mod_input_data_ui <- function(id) {
             verbatimTextOutput(ns("data_file_info"))
           )
         )
-      )
+      ),
+      checkboxInput(inputId = ns("omit"),
+                    label = "Omit first amino?",
+                    value = FALSE)
     )
- 
+    # )
   )
 }
     
@@ -56,28 +63,28 @@ mod_input_data_server <- function(id){
     
     data_source <- reactive({ attr(dat_raw(), "source") })
     
-    dat_adjusted <- reactive({
+    dat <- reactive({
              dat_raw()
     })
     
     ### other outputs
     
     output[["data_file_info"]] <- renderText({
-      paste0(
-        if (is.null(input[["data_file"]]))
-          "Example file: eEF1B_alpha.csv."
-        else "Supplied file is valid.",
-        "\nDetected data source: ", data_source(),
-        if (data_source() == "HDeXaminer")
-          ". User action needed below!"
-        else "."
-      )
-    })
-    
-    ### observer
-    
-    observe({
-      toggle_id(data_source() == "HDeXaminer", "HaDeX-examiner-settings-panel")
+      
+      # paste0(
+      #   if (is.null(input[["data_file"]]))
+      #     "Example file: eEF1B_alpha.csv."
+      #   else "Supplied file is valid.",
+      #   "\nDetected data source: ", data_source(),
+      #   if (data_source() == "HDeXaminer")
+      #     ". User action needed below!"
+      #   else "."
+      # )
+      # 
+      
+      if (is.null(input[["data_file"]]))
+            "Example file: eEF1B_alpha.csv."
+      else "Other data"
     })
     
     ### return values
@@ -85,7 +92,6 @@ mod_input_data_server <- function(id){
     return(
       c(
         dat,
-        str_path = str_path,
         list(input_info = reactive({
           data_file <- input[["data_file"]]
           
