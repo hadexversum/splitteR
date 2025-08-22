@@ -1,3 +1,8 @@
+#' @examples
+#' rename(subsections, Sequence = sub_sequence, Start = sub_start, End = sub_end) %>%
+#' plot_subs_cov()
+#' 
+#' 
 #' @export
 plot_subs_cov <- function(dat, color = NULL){
   
@@ -37,7 +42,7 @@ plot_subs_cov <- function(dat, color = NULL){
   coverage_plot <- ggplot(data = dat) +
     geom_rect(data = dat, 
               mapping = aes(xmin = Start, 
-                            xmax = End, 
+                            xmax = End +1, 
                             ymin = ID, 
                             ymax = ID - 1,
                             fill = common), 

@@ -43,9 +43,7 @@ create_subsections <- function(dat){
   
   pep_out <- res %>% filter(!is.na(longer_id)) %>% select(longer_id) %>% unique(.) %>% .[[1]]
   
-  filter(res, !id%in%pep_out)
-  
-  return(res)
+  return(filter(res, !id%in%pep_out))
 }
 
 
