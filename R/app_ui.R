@@ -20,7 +20,10 @@ app_ui <- function(request) {
       mainPanel(
       fluidPage(
         # h1("main"),
-        mod_coverage_plots_ui("coverage_plots")
+        mod_coverage_plots_ui("coverage_plots"),
+        plotOutput("subsections_plot"),
+        p("Creating a downloadable file may take a while!"),
+        downloadButton("download_subsections")
         
     )
     )
@@ -50,6 +53,12 @@ golem_add_external_resources <- function() {
     "utils",
     app_sys("app/utils")
   )
+  
+  ##
+  library(dplyr)
+  library(data.table)
+  library(ggplot2)
+  library(HaDeX)
 
   tags$head(
     favicon(),

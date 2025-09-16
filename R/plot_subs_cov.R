@@ -1,3 +1,7 @@
+#' @importFrom data.table as.data.table
+#' @importFrom magrittr %>%
+#' @importFrom dplyr mutate
+#' 
 #' @examples
 #' rename(subsections, Sequence = sub_sequence, Start = sub_start, End = sub_end) %>%
 #' plot_subs_cov()

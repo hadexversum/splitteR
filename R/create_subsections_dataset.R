@@ -18,15 +18,15 @@ create_subsections_dataset <- function(dat,
     mutate(id = 1:nrow(.)) 
   
   times <- unique(mass_dat[["Exposure"]])
-  
+
   res_uc <- lapply(1:nrow(subsections), function(i){
     
     sub_start =   subsections[i, "sub_start"]
     sub_end = subsections[i, "sub_end"]
     sub_sequence = subsections[i, "sub_sequence"]
     
-    longer_peptide <- peptides[peptides[["id"]] == subsections[i, "longer_id"]]
-    shorter_peptide <- peptides[peptides[["id"]] == subsections[i, "shorter_id"]]
+    longer_peptide <- peptides[peptides[["id"]] == subsections[i, "longer_id"], ]
+    shorter_peptide <- peptides[peptides[["id"]] == subsections[i, "shorter_id"], ]
     
     lapply(times, function(time){
       
