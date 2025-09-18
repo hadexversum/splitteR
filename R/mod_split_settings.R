@@ -7,14 +7,15 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-mod_split_settings_ui <- function(id) {
+mod_settings_ui <- function(id) {
   ns <- NS(id)
   tagList(
  
-    checkboxGroupInput(inputId = ns(""),
-                       label = "Select slicing method:",
-                       choiceNames = c("Common N terminus", "Common C terminus"),
-                       choiceValues = c(1, 2))
+    radioButtons(inputId = "selected_state",
+                 label = "Select state to see its coverage:",
+                 choices = c("state_1", "state_2"),
+                 selected = "state_1"
+                 )
     
   )
 }
@@ -22,15 +23,19 @@ mod_split_settings_ui <- function(id) {
 #' split_settings Server Functions
 #'
 #' @noRd 
-mod_split_settings_server <- function(id){
+mod_settings_server <- function(id, dat){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
+    
+    states <- reactive(unique(dat[[1]]()[["State"]]))
+    
+    observe({
+      
+      # browser()
+      updateRadioButtons(session, inputId = ns("selected_state"),
+                         choices = states(),
+                         selected = states()[1])
+    })
  
   })
 }
-    
-## To be copied in the UI
-# mod_split_settings_ui("split_settings_1")
-    
-## To be copied in the server
-# mod_split_settings_server("split_settings_1")

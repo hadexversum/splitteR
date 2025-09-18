@@ -11,7 +11,8 @@ mod_coverage_plots_ui <- function(id) {
   ns <- NS(id)
   tagList(
  
-    plotOutput(outputId = ns("peptide_coverage_plot"))
+    plotOutput(outputId = ns("peptide_coverage_plot")),
+    plotOutput(outputId = ns("subfragments_coverage_plot"))
   )
 }
     
@@ -23,8 +24,19 @@ mod_coverage_plots_server <- function(id, dat){
     ns <- session$ns
  
     output[["peptide_coverage_plot"]] <- renderPlot({
-      # browser()
      HaDeX::plot_coverage(dat[[1]]()) 
+    })
+    
+    subsections <- reactive({ create_subsections(dat[[1]]()) })
+    
+    output[["subfragments_coverage_plot"]] <- renderPlot({
+      plot_subs_cov(dat = dplyr::rename(subsections(), Sequence = sub_sequence, Start = sub_start, End = sub_end))
+      
+    })
+    
+    dat_subsections <- reactive({
+      # browser()
+      create_subsections_dataset(dat = dat[[1]](), subsections = subsections())
     })
     
   })

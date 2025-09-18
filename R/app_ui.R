@@ -6,35 +6,29 @@
 #' @noRd
 app_ui <- function(request) {
   tagList(
-    # Leave this function for adding external resources
     golem_add_external_resources(),
-    # Your application UI logic
     sidebarLayout(
     sidebarPanel(
     fluidPage(
         mod_input_data_ui("input_data"),
-        mod_split_settings_ui("split_settings")
+        mod_settings_ui("split_settings")
       )
-      )
-  ,
+      ),
       mainPanel(
       fluidPage(
-        # h1("main"),
         mod_coverage_plots_ui("coverage_plots"),
-        plotOutput("subsections_plot"),
-        p("Creating a downloadable file may take a while!"),
-        downloadButton("download_subsections")
+        mod_download_sub_csv_ui("subfragments")
         
     )
     )
-    )
-  ,
+    ),
       
     includeCSS(path = app_sys("app/utils/datatable.css")),
     includeCSS(path = app_sys("app/utils/selectize.css"))
     
     )
 }
+
 
 #' Add external Resources to the Application
 #'
