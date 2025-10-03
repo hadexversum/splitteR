@@ -25,15 +25,18 @@ create_subsections_dataset <- function(dat,
     sub_end = subsections[i, "sub_end"]
     sub_sequence = subsections[i, "sub_sequence"]
     
+    sub_type = subsections[i, "common"]
+    
     longer_peptide <- peptides[peptides[["id"]] == subsections[i, "longer_id"], ]
     shorter_peptide <- peptides[peptides[["id"]] == subsections[i, "shorter_id"], ]
     
     lapply(times, function(time){
       
-      if(nrow(longer_peptide) == 0 & nrow(shorter_peptide) == 0){
+      if(sub_type == "origin"){
         origin_dat <- filter(mass_dat, Start == sub_start, End == sub_end) %>%
           rename(Center = avg_exp_mass) %>%
           mutate(Fragment = "",
+                 MaxUptake = nchar(sub_sequence),
                  z = 1,
                  RT = 1,
                  Inten = 1)
@@ -49,7 +52,7 @@ create_subsections_dataset <- function(dat,
         merge(longer_dat_mass, shorter_dat_mass, by = c("Protein", "Modification", "State", "Exposure", "File")) %>%
           select( -MaxUptake.x, -MaxUptake.y, - Sequence.x, -Sequence.y, -MHP.x, -MHP.y, -id.x, -id.y) %>%
           mutate(mass = avg_exp_mass.x - avg_exp_mass.y) %>%
-          mutate(MaxUptake = 1, 
+          mutate(MaxUptake = nchar(sub_sequence), 
                  MHP = 1,
                  Start = sub_start, 
                  End = sub_end,

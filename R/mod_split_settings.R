@@ -11,7 +11,7 @@ mod_settings_ui <- function(id) {
   ns <- NS(id)
   tagList(
  
-    radioButtons(inputId = "selected_state",
+    radioButtons(inputId = ns("selected_state"),
                  label = "Select state to see its coverage:",
                  choices = c("state_1", "state_2"),
                  selected = "state_1"
@@ -32,7 +32,7 @@ mod_settings_server <- function(id, dat){
     observe({
       
       # browser()
-      updateRadioButtons(session, inputId = ns("selected_state"),
+      updateRadioButtons(session, inputId = "selected_state",
                          choices = states(),
                          selected = states()[1])
     })

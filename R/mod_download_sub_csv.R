@@ -56,6 +56,10 @@ mod_download_sub_csv_server <- function(id, dat){
       
       lapply(input[["download_states"]], function(state){
         
+        # browser()
+        
+        print(state)
+        
         filter(dat[[1]](), State == state) %>%
           create_subsections() %>%
           create_subsections_dataset(dat = dat[[1]](), subsections = .)
