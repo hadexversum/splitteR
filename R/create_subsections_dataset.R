@@ -33,7 +33,7 @@ create_subsections_dataset <- function(dat,
     lapply(times, function(time){
       
       if(sub_type == "origin"){
-        origin_dat <- filter(mass_dat, Start == sub_start, End == sub_end) %>%
+        origin_dat <- filter(mass_dat, Start == sub_start, End == sub_end, Exposure == time) %>%
           rename(Center = avg_exp_mass) %>%
           mutate(Fragment = "",
                  MaxUptake = nchar(sub_sequence),
