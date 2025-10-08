@@ -60,9 +60,10 @@ mod_download_sub_csv_server <- function(id, dat){
         
         print(state)
         
-        filter(dat[[1]](), State == state) %>%
-          create_subsections() %>%
-          create_subsections_dataset(dat = dat[[1]](), subsections = .)
+        state_dat <- filter(dat[[1]](), State == state)
+        
+        create_subsections_dataset(dat = state_dat, 
+                                   subsections = create_subsections(state_dat))
         
       }) %>% bind_rows()
       

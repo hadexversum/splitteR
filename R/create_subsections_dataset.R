@@ -2,7 +2,7 @@
 #' 
 #' dat <- filter(alpha_dat, State == "Alpha_KSCN", End < 35)
 #' subsections <- create_subsections(dat)
-#' mass_dat <- create_subsections_dataset(dat, subsections)
+#' subs_dats <- create_subsections_dataset(dat, subsections)
 #' 
 #' @export
 
@@ -18,6 +18,8 @@ create_subsections_dataset <- function(dat,
     mutate(id = 1:nrow(.)) 
   
   times <- unique(mass_dat[["Exposure"]])
+  
+  subsections <- unique(subsections)
 
   res_uc <- lapply(1:nrow(subsections), function(i){
     

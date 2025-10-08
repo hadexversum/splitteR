@@ -9,5 +9,5 @@ create_subsections_dataset(dat, subsections)
 \description{
 dat <- filter(alpha_dat, State == "Alpha_KSCN", End < 35)
 subsections <- create_subsections(dat)
-mass_dat <- create_subsections_dataset(dat, subsections)
+subs_dats <- create_subsections_dataset(dat, subsections)
 }
