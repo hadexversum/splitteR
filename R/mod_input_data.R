@@ -35,7 +35,8 @@ mod_input_data_ui <- function(id) {
       ),
       checkboxInput(inputId = ns("omit"),
                     label = "Omit first amino?",
-                    value = FALSE)
+                    value = TRUE),
+      p("Omitting first amino is necessary when working with subsection to eliminate back-exchange effect.")
     )
     # )
   )
