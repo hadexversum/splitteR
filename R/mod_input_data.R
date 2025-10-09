@@ -64,7 +64,9 @@ mod_input_data_server <- function(id){
     data_source <- reactive({ attr(dat_raw(), "source") })
     
     dat <- reactive({
-             dat_raw()
+      
+      HRaDeX::omit_amino(dat = dat_raw(), omit = input[["omit"]])
+             
     })
     
     ### other outputs
@@ -84,7 +86,7 @@ mod_input_data_server <- function(id){
       
       if (is.null(input[["data_file"]]))
             "Example file: eEF1B_alpha.csv."
-      else "Other data"
+      else "Other data!"
     })
     
     ### return values
