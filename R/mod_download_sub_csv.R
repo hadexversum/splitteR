@@ -69,12 +69,15 @@ mod_download_sub_csv_server <- function(id, dat){
       
     })
     
+    file_name <- reactive({
+      unique(dat[[1]]()[["Protein"]])
+    })
     
     # download file
     
     output[["download_button"]] <- downloadHandler(
 
-      filename ="subsection_data.csv",
+      filename = paste0("sub_", file_name(), ".csv"),
       content = function(file){
         write.csv(dat_subsections(),
                   file = file,
