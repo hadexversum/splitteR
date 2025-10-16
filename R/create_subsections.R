@@ -55,7 +55,9 @@ find_subs_start <- function(tmp_dat){
   tmp_dat <- arrange(tmp_dat, desc(End))
   
   subs <- data.frame(sub_sequence = character(), 
-                     sub_start = double(), sub_end = double(), longer_id = double(), shorter_id = double(),
+                     sub_start = double(), sub_end = double(), 
+                     longer_id = double(), longer_sequence = character(), longer_start = double(), longer_end = double(),
+                     shorter_id = double(), shorter_sequence = character(), shorter_start = double(), shorter_end = double(),
                      common = character(), id = double())  
   
   n_pep <- nrow(tmp_dat)
@@ -63,7 +65,8 @@ find_subs_start <- function(tmp_dat){
   if(n_pep == 1){
     
     subs <- data.frame(sub_sequence = tmp_dat[["Sequence"]], sub_start = tmp_dat[["Start"]], sub_end = tmp_dat[["End"]], 
-                       longer_id = NA, shorter_id = NA, common = "origin", id = tmp_dat[["id"]])
+                       longer_id = NA, shorter_id = NA, common = "origin", id = tmp_dat[["id"]],
+                       longer_sequence = NA, longer_start = NA, longer_end = NA, shorter_sequence = NA, shorter_start = NA, shorter_end = NA)
     
   } else {
     
@@ -78,13 +81,19 @@ find_subs_start <- function(tmp_dat){
       sub_sequence <- substring(longer_sequence, nchar(longer_sequence) - sub_sequence_length + 1, nchar(longer_sequence))
       
       subs <- rbind(subs, data.frame(sub_sequence = sub_sequence, sub_start = shorter_pep[["End"]] +1 , sub_end = longer_pep[["End"]], 
-                                     longer_id = longer_pep[["id"]], shorter_id = shorter_pep[["id"]], common = "start", id = NA))
+                                     longer_id = longer_pep[["id"]], shorter_id = shorter_pep[["id"]], common = "start", id = NA,
+                                     longer_sequence = longer_pep[["Sequence"]], longer_start = longer_pep[["Start"]], longer_end = longer_pep[["End"]], 
+                                     shorter_sequence = shorter_pep[["Sequence"]], shorter_start = shorter_pep[["Start"]], shorter_end = shorter_pep[["End"]]
+                                     ))
       
     }
     
     last_pep <- tmp_dat[n_pep, ]
     subs <- rbind(subs, data.frame(sub_sequence = last_pep[["Sequence"]], sub_start = last_pep[["Start"]], sub_end = last_pep[["End"]], 
-                                   longer_id = NA, shorter_id = NA, common = "origin", id = last_pep[["id"]]))
+                                   longer_id = NA, shorter_id = NA, common = "origin", id = last_pep[["id"]],
+                                   longer_sequence = NA, longer_start = NA, longer_end = NA, 
+                                   shorter_sequence = NA, shorter_start = NA, shorter_end = NA
+                                   ))
     
   }
   
@@ -97,7 +106,9 @@ find_subs_end <- function(tmp_dat){
   tmp_dat <- arrange(tmp_dat, Start)
   
   subs <- data.frame(sub_sequence = character(), 
-                     sub_start = double(), sub_end = double(), longer_id = double(), shorter_id = double(),
+                     sub_start = double(), sub_end = double(), 
+                     longer_id = double(), longer_sequence = character(), longer_start = double(), longer_end = double(),
+                     shorter_id = double(), shorter_sequence = character(), shorter_start = double(), shorter_end = double(),
                      common = character(), id = double())  
   
   n_pep <- nrow(tmp_dat)
@@ -105,7 +116,8 @@ find_subs_end <- function(tmp_dat){
   if(n_pep == 1){
     
     subs <- data.frame(sub_sequence = tmp_dat[["Sequence"]], sub_start = tmp_dat[["Start"]], sub_end = tmp_dat[["End"]], 
-                       longer_id = NA, shorter_id = NA, common = "origin", id = tmp_dat[["id"]])
+                       longer_id = NA, shorter_id = NA, common = "origin", id = tmp_dat[["id"]],
+                       longer_sequence = NA, longer_start = NA, longer_end = NA, shorter_sequence = NA, shorter_start = NA, shorter_end = NA)
     
   } else {
     
@@ -122,13 +134,16 @@ find_subs_end <- function(tmp_dat){
       
       
       subs <- rbind(subs, data.frame(sub_sequence = sub_sequence, sub_start = longer_pep[["Start"]], sub_end = shorter_pep[["Start"]] -1, 
-                                     longer_id = longer_pep[["id"]], shorter_id = shorter_pep[["id"]], common = "end", id = NA))
+                                     longer_id = longer_pep[["id"]], shorter_id = shorter_pep[["id"]], common = "end", id = NA,
+                                     longer_sequence = longer_pep[["Sequence"]], longer_start = longer_pep[["Start"]], longer_end = longer_pep[["End"]], 
+                                     shorter_sequence = shorter_pep[["Sequence"]], shorter_start = shorter_pep[["Start"]], shorter_end = shorter_pep[["End"]]))
       
     }
     
     last_pep <- tmp_dat[n_pep, ]
     subs <- rbind(subs, data.frame(sub_sequence = last_pep[["Sequence"]], sub_start = last_pep[["Start"]], sub_end = last_pep[["End"]], 
-                                   longer_id = NA, shorter_id = NA, common = "origin", id = last_pep[["id"]]))
+                                   longer_id = NA, shorter_id = NA, common = "origin", id = last_pep[["id"]],
+                                   longer_sequence = NA, longer_start = NA, longer_end = NA, shorter_sequence = NA, shorter_start = NA, shorter_end = NA))
     
   }
   

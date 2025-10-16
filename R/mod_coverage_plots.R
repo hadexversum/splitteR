@@ -11,8 +11,8 @@ mod_coverage_plots_ui <- function(id) {
   ns <- NS(id)
   tagList(
  
-    plotOutput(outputId = ns("peptide_coverage_plot")),
-    plotOutput(outputId = ns("subfragments_coverage_plot"))
+    ggiraph::girafeOutput(outputId = ns("peptide_coverage_plot"), width = "80%"),
+    ggiraph::girafeOutput(outputId = ns("subfragments_coverage_plot"), width = "80%")
   )
 }
     
@@ -23,14 +23,17 @@ mod_coverage_plots_server <- function(id, dat){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
  
-    output[["peptide_coverage_plot"]] <- renderPlot({
-     HaDeX::plot_coverage(dat[[1]]()) 
+    output[["peptide_coverage_plot"]] <- ggiraph::renderGirafe({
+      ggiraph::girafe(ggobj = HaDeX::plot_coverage(dat[[1]](), interactive = TRUE),
+                      width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
     })
     
     subsections <- reactive({ create_subsections(dat[[1]]()) })
     
-    output[["subfragments_coverage_plot"]] <- renderPlot({
-      plot_subs_cov(dat = dplyr::rename(subsections(), Sequence = sub_sequence, Start = sub_start, End = sub_end))
+    output[["subfragments_coverage_plot"]] <- ggiraph::renderGirafe({
+      ggiraph::girafe(ggobj = plot_subs_cov(dat = dplyr::rename(subsections(), Sequence = sub_sequence, Start = sub_start, End = sub_end), interactive = TRUE),
+                      width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE)
+                      )
       
     })
     

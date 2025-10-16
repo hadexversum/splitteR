@@ -77,7 +77,7 @@ mod_download_sub_csv_server <- function(id, dat){
     
     output[["download_button"]] <- downloadHandler(
 
-      filename = paste0("sub_", file_name(), ".csv"),
+      filename = paste0("subsections_", file_name(), ".csv"),
       content = function(file){
         write.csv(dat_subsections(),
                   file = file,
