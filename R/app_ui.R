@@ -16,9 +16,15 @@ app_ui <- function(request) {
       ),
       mainPanel(
       fluidPage(
-        mod_coverage_plots_ui("coverage_plots"),
-        mod_download_sub_csv_ui("subfragments")
-        
+        navset_pill( 
+         nav_panel("Coverage",
+                   mod_coverage_plots_ui("coverage_plots"),
+                   mod_download_sub_csv_ui("subfragments")
+                   ),
+         nav_panel("UCs",
+                   mod_table_plot_uc_ui("uptake_curves")
+                   )
+        )
     )
     )
     ),
@@ -53,6 +59,7 @@ golem_add_external_resources <- function() {
   library(data.table)
   library(ggplot2)
   library(HaDeX)
+  library(bslib)
 
   tags$head(
     favicon(),

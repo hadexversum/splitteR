@@ -19,7 +19,7 @@ mod_coverage_plots_ui <- function(id) {
 #' coverage_plots Server Functions
 #'
 #' @noRd 
-mod_coverage_plots_server <- function(id, dat){
+mod_coverage_plots_server <- function(id, dat, subsections){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
  
@@ -28,7 +28,7 @@ mod_coverage_plots_server <- function(id, dat){
                       width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
     })
     
-    subsections <- reactive({ create_subsections(dat[[1]]()) })
+    # subsections <- reactive({ create_subsections(dat[[1]]()) })
     
     output[["subfragments_coverage_plot"]] <- ggiraph::renderGirafe({
       ggiraph::girafe(ggobj = plot_subs_cov(dat = dplyr::rename(subsections(), Sequence = sub_sequence, Start = sub_start, End = sub_end), interactive = TRUE),

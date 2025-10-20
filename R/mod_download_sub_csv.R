@@ -19,7 +19,7 @@ mod_download_sub_csv_ui <- function(id) {
 #' download_sub_csv Server Functions
 #'
 #' @noRd 
-mod_download_sub_csv_server <- function(id, dat){
+mod_download_sub_csv_server <- function(id, dat, dat_subsections){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
  
@@ -52,20 +52,9 @@ mod_download_sub_csv_server <- function(id, dat){
       )
     }) %>% bindEvent(input[["get_downloads"]])
     
-    dat_subsections <- reactive({
+    downlad_dat <- reactive({
       
-      lapply(input[["download_states"]], function(state){
-        
-        # browser()
-        
-        print(state)
-        
-        state_dat <- filter(dat[[1]](), State == state)
-        
-        create_subsections_dataset(dat = state_dat, 
-                                   subsections = create_subsections(state_dat))
-        
-      }) %>% bind_rows()
+      filter(dat_subsections(), State %in% input[["download_states"]])
       
     })
     
@@ -79,7 +68,7 @@ mod_download_sub_csv_server <- function(id, dat){
 
       filename = paste0("subsections_", file_name(), ".csv"),
       content = function(file){
-        write.csv(dat_subsections(),
+        write.csv(downlad_dat(),
                   file = file,
                   quote = FALSE,
                   row.names = FALSE)}
