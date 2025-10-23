@@ -1,5 +1,13 @@
 #' to test
 #' 
+#' @param dat raw data
+#' @param subsections subsections created from 
+#' the dat coverage
+#' 
+#' @description
+#' use get_subsection_data
+#' 
+#' @examples
 #' dat <- filter(alpha_dat, State == "Alpha_KSCN", End < 35)
 #' subsections <- create_subsections(dat)
 #' subs_dats <- create_subsections_dataset(dat, subsections)
@@ -72,5 +80,56 @@ create_subsections_dataset <- function(dat,
   }) %>% bind_rows()
   
   return(res_uc)
+  
+}
+
+
+#' calculate mass uptake for one subsection
+#' 
+#' @examples
+#' subsections <- create_subsections(alpha_dat)
+#' subsection <- subsections[3, ]
+#' get_subsection_data(dat = alpha_dat, subsection = subsection)
+#' 
+#' @export
+get_subsection_data <- function(dat,
+                                state = dat[["State"]][1],
+                                subsection){
+  
+  assert(subsection[["common"]]!="origin")
+
+  ##
+  
+  longer_dat_mass <- dat %>%
+    filter(Sequence == subsection[, "longer_sequence"],
+           Start == subsection[, "longer_start"],
+           End == subsection[, "longer_end"],
+           State == state) %>%
+    calculate_exp_masses_per_replicate()
+  
+  shorter_dat_mass <- dat %>%
+    filter(Sequence == subsection[, "shorter_sequence"],
+           Start == subsection[, "shorter_start"],
+           End == subsection[, "shorter_end"],
+           State == state) %>%
+    calculate_exp_masses_per_replicate()
+  
+  
+  ##
+  
+  merge(longer_dat_mass, shorter_dat_mass, by = c("Protein", "Modification", "State", "Exposure", "File")) %>%
+    select( -MaxUptake.x, -MaxUptake.y, - Sequence.x, -Sequence.y, -MHP.x, -MHP.y) %>%
+    mutate(Center = avg_exp_mass.x - avg_exp_mass.y) %>%
+    mutate(MaxUptake = nchar(subsection[, "sub_sequence"]), 
+           MHP = 1,
+           Start = subsection[, "sub_start"], 
+           End = subsection[, "sub_end"],
+           Sequence = subsection[, "sub_sequence"],
+           Fragment = "",
+           z = 1,
+           RT = 1,
+           Inten = 1) %>%
+    select(-Start.x, -End.x, -Start.y, -End.y, -avg_exp_mass.x, -avg_exp_mass.y) 
+  
   
 }

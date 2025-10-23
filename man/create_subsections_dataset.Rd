@@ -6,8 +6,18 @@
 \usage{
 create_subsections_dataset(dat, subsections)
 }
+\arguments{
+\item{dat}{raw data}
+
+\item{subsections}{subsections created from 
+the dat coverage}
+}
 \description{
+use get_subsection_data
+}
+\examples{
 dat <- filter(alpha_dat, State == "Alpha_KSCN", End < 35)
 subsections <- create_subsections(dat)
 subs_dats <- create_subsections_dataset(dat, subsections)
+
 }

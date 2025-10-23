@@ -11,7 +11,7 @@ mod_table_plot_uc_ui <- function(id) {
   ns <- NS(id)
   tagList(
     DT::dataTableOutput(ns("subsections_list")),
-    ggiraph::girafeOutput(ns("subsections_uc"))
+    ggiraph::girafeOutput(ns("subsections_uc"), width = "80%")
     
   )
 }
@@ -19,7 +19,7 @@ mod_table_plot_uc_ui <- function(id) {
 #' table_plot_uc Server Functions
 #'
 #' @noRd 
-mod_table_plot_uc_server <- function(id, dat, subsections, dat_subsections){
+mod_table_plot_uc_server <- function(id, dat, subsections){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
  
@@ -29,6 +29,12 @@ mod_table_plot_uc_server <- function(id, dat, subsections, dat_subsections){
                     selection = "single")
     })
     
+    subsection_dat <- reactive({
+      
+      get_subsection_data(dat[[1]](), subsection = subsections()[input[["subsections_list_rows_selected"]], ])
+      
+    })
+    
     output[["subsections_uc"]] <- ggiraph::renderGirafe({
       
       validate(need(!is.null(input[["subsections_list_rows_selected"]]), ""))
@@ -36,19 +42,28 @@ mod_table_plot_uc_server <- function(id, dat, subsections, dat_subsections){
       
       # browser()
       
-      chosen_subsection <- subsections()[i, c("sub_sequence", "sub_start", "sub_end")]
+      if(subsections()[input[["subsections_list_rows_selected"]], "common"] == "origin"){
+        
+        plt <- dat[[1]]() %>%
+          filter(Sequence == subsections()[input[["subsections_list_rows_selected"]], "sub_sequence"],
+                 Start == subsections()[input[["subsections_list_rows_selected"]], "sub_start"],
+                 End == subsections()[input[["subsections_list_rows_selected"]], "sub_end"]) %>%
+        calculate_peptide_kinetics(.,
+                                   states = dat[[1]]()[["State"]][1]) %>%
+        plot_uptake_curve(.)
+        
+      } else {
+        
+        plt <- plot_uc_with_origin(dat = dat[[1]](), 
+                                   subsection = subsections()[input[["subsections_list_rows_selected"]], ],
+                                   subsection_dat = subsection_dat())
+        
+      }
+   
       
-      plt <- dat_subsections() %>%
-        filter(Sequence == chosen_subsection[["sub_sequence"]],
-               Start == chosen_subsection[["sub_start"]],
-               End == chosen_subsection[["sub_end"]]) %>%
-        ggplot() +
-        geom_point(aes(x = Exposure, y = Center, color = State)) + 
-        scale_x_log10() 
       
-      
-        girafe(ggobj = plt,
-               width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
+      girafe(ggobj = plt,
+            width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
       
     })
     
