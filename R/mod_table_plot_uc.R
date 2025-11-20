@@ -50,7 +50,8 @@ mod_table_plot_uc_server <- function(id, dat, subsections){
                  End == subsections()[input[["subsections_list_rows_selected"]], "sub_end"]) %>%
         calculate_peptide_kinetics(.,
                                    states = dat[[1]]()[["State"]][1]) %>%
-        plot_uptake_curve(.)
+        plot_uptake_curve(.) +
+          ggplot2::ylim(c(0, NA))
         
       } else {
         
