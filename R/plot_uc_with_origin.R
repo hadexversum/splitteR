@@ -8,7 +8,7 @@
 #' subsection <- subsections[3,]
 #' subsection_dat <- get_subsection_data(alpha_dat, subsection = subsection)
 #'
-#' plot_uc_with_origin(dat = alpha_dat, subsection_dat = subsection_dat)
+#' plot_uc_with_origin(dat = alpha_dat, subsection_dat = subsection_dat, subsection = subsection)
 #'
 #' @export
 
@@ -38,10 +38,22 @@ plot_uc_with_origin <- function(dat,
     ggplot() +
       geom_point(dat = longer_kin_dat, aes(x = Exposure, y = deut_uptake, color = Sequence)) +
       geom_line(dat = longer_kin_dat, aes(x = Exposure, y = deut_uptake, color = Sequence)) +
+      geom_ribbon(dat = longer_kin_dat, aes(x = Exposure, 
+                                            ymin = deut_uptake - err_deut_uptake,
+                                            ymax = deut_uptake + err_deut_uptake,
+                                            fill = Sequence),  alpha = 0.15) + 
       geom_point(dat = shorter_kin_dat, aes(x = Exposure, y = deut_uptake, color = Sequence)) +
       geom_line(dat = shorter_kin_dat, aes(x = Exposure, y = deut_uptake, color = Sequence)) +
+      geom_ribbon(dat = shorter_kin_dat, aes(x = Exposure, 
+                                            ymin = deut_uptake - err_deut_uptake,
+                                            ymax = deut_uptake + err_deut_uptake,
+                                            fill = Sequence),  alpha = 0.15) +   
       geom_point(dat = sub_kin_dat, aes(x = Exposure, y = deut_uptake, color = Sequence)) +
       geom_line(dat = sub_kin_dat, aes(x = Exposure, y = deut_uptake, color = Sequence), linetype = 2) +
+      geom_ribbon(dat = sub_kin_dat, aes(x = Exposure, 
+                                            ymin = deut_uptake - err_deut_uptake,
+                                            ymax = deut_uptake + err_deut_uptake,
+                                            fill = Sequence),  alpha = 0.15) + 
       scale_x_log10() + 
       ylim(c(low_y-1, NA)) +
       theme(legend.position = "bottom") +
