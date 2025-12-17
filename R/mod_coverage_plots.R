@@ -24,7 +24,7 @@ mod_coverage_plots_server <- function(id, dat, subsections){
     ns <- session$ns
  
     output[["peptide_coverage_plot"]] <- ggiraph::renderGirafe({
-      ggiraph::girafe(ggobj = HaDeX::plot_coverage(dat[[1]](), interactive = TRUE),
+      ggiraph::girafe(ggobj = HaDeX2::plot_coverage(dat[[1]](), interactive = TRUE),
                       width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
     })
     

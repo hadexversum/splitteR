@@ -19,6 +19,6 @@ subsections <- create_subsections(alpha_dat)
 subsection <- subsections[3,]
 subsection_dat <- get_subsection_data(alpha_dat, subsection = subsection)
 
-plot_uc_with_origin(dat = alpha_dat, subsection_dat = subsection_dat)
+plot_uc_with_origin(dat = alpha_dat, subsection_dat = subsection_dat, subsection = subsection)
 
 }

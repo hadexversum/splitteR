@@ -35,5 +35,7 @@ app_server <- function(input, output, session) {
   
   mod_table_plot_uc_server("uptake_curves", dat = dat, 
                            subsections = subsections)
+  
+  mod_back_exchange_server("bex", dat = dat)
 
 }

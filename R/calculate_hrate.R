@@ -27,6 +27,6 @@ calculate_hrate <- function(sequence){
     }
   }) %>% unlist(.)
   
-  sum(v_hrates)
+  return(sum(v_hrates))
   
 }

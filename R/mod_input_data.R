@@ -56,7 +56,7 @@ mod_input_data_server <- function(id){
         example_data_alpha
       } else {
         validate(need(try({
-          file <- HaDeX::read_hdx(data_file[["datapath"]])
+          file <- HaDeX2::read_hdx(data_file[["datapath"]])
         }), "File does not fullfill requirements. Check file requirements!"))
         file
       }

@@ -23,6 +23,9 @@ app_ui <- function(request) {
                    ),
          nav_panel("UCs",
                    mod_table_plot_uc_ui("uptake_curves")
+                   ),
+         nav_panel("Back-exchange",
+                   mod_back_exchange_ui("bex")
                    )
         )
     )
@@ -58,8 +61,9 @@ golem_add_external_resources <- function() {
   library(dplyr)
   library(data.table)
   library(ggplot2)
-  library(HaDeX)
+  library(HaDeX2)
   library(bslib)
+  library(DT)
 
   tags$head(
     favicon(),
