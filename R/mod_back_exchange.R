@@ -13,7 +13,8 @@ mod_back_exchange_ui <- function(id) {
     selectInput(inputId = ns("FD"),
                 label = "Select FD timepoint",
                 choices = c(1000, 1400)),
-    DTOutput(outputId = ns("bex_data"))
+    DTOutput(outputId = ns("bex_data")),
+    plotOutput(outputId = ns("bex_scatter"))
  
   )
 }
@@ -36,9 +37,18 @@ mod_back_exchange_server <- function(id, dat){
     
     bex_dat <- reactive({
       
-      HaDeX2::calculate_back_exchange(dat = dat[[1]](),
-                                      time_100 = as.numeric(input[["FD"]])) 
+      # browser()
       
+      
+      bex <- HaDeX2::calculate_back_exchange(dat = dat[[1]](),
+                                      time_100 = as.numeric(input[["FD"]])) %>%
+        mutate(seq_length = nchar(Sequence))
+      
+      bex["hrates"] <- lapply(1:nrow(bex), function(i){
+        splitteR::calculate_hrate(sequence = bex[i, "Sequence"])
+      }) %>% unlist(.)
+      
+      bex
     })
     
     ##
@@ -51,6 +61,16 @@ mod_back_exchange_server <- function(id, dat){
       
     })
  
+    
+    output[["bex_scatter"]] <- renderPlot({
+      
+      ggplot(bex_dat()) + 
+        geom_point(aes(x = back_exchange, y = hrates, color = seq_length)) +
+        theme(legend.position = "bottom") +
+        labs(color = "length")
+      
+    })
+    
   })
   
   
