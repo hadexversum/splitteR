@@ -25,7 +25,7 @@ mod_back_exchange_ui <- function(id) {
         selectInput(inputId = ns("state"),
                     label = "Select_state",
                     choices = "Alpha")
-        ))
+    ))
     ,
     DTOutput(outputId = ns("res_data")),
     p("What do we see?"),
@@ -34,11 +34,12 @@ mod_back_exchange_ui <- function(id) {
     p("max_exp_ret = deut_uptake(t = FD)/(deut_part*MaxUptake)"), 
     p("theo_ret = h_ret/MaxUptake"),
     p("ret_ratio = max_exp_ret/theo_ret"),
-    plotOutput(outputId = ns("res_scatter"))
- 
+    plotOutput(outputId = ns("res_scatter")),
+    plotOutput(outputId = ns("uc_scaled"))
+    
   )
 }
-    
+
 #' back_exchange Server Functions
 #'
 #' @noRd 
@@ -62,7 +63,7 @@ mod_back_exchange_server <- function(id, dat){
       updateSelectInput(inputId = "state",
                         choices = states, 
                         selected = states[1])
-   
+      
     })
     
     res_dat <- reactive({
@@ -83,13 +84,6 @@ mod_back_exchange_server <- function(id, dat){
         splitteR::calculate_hrate(sequence = h_res[i, "Sequence"])
       }) %>% unlist(.)
       
-      # res <- merge(kin_dat_fd, h_res, by = c("Protein", "Sequence", "Start", "End", "Modification")) %>%
-      #   arrange(Start, End) %>%
-      #   mutate(hrates_scaled = hrates*as.numeric(input[["deut_part"]]),
-      #          hrates_ratio = hrates_scaled/deut_uptake,
-      #          ID = 1:nrow(.)) 
-      
-      
       res <- merge(kin_dat_fd, h_res, by = c("Protein", "Sequence", "Start", "End", "Modification")) %>%
         arrange(Start, End) %>%
         mutate(ID = 1:nrow(.),
@@ -105,6 +99,7 @@ mod_back_exchange_server <- function(id, dat){
     
     
     
+    
     output[["res_data"]] <- renderDT({
       
       res_dat() %>%
@@ -115,9 +110,10 @@ mod_back_exchange_server <- function(id, dat){
                theo_ret = round(theo_ret, 4),
                ret_ratio = round(ret_ratio, 4),
                max_exp_ret = round(max_exp_ret, 4)) %>%
-        select(ID, Protein, Sequence, State, Start, End, Modification, seq_length, MaxUptake, h_ret, theo_ret, max_exp_ret, ret_ratio, back_exchange, err_back_exchange)
+        select(ID, Protein, Sequence, State, Start, End, Modification, seq_length, MaxUptake, deut_uptake, h_ret, theo_ret, max_exp_ret, ret_ratio, back_exchange, err_back_exchange)
       
-    })
+    },
+    selection = "single")
  
     
     output[["res_scatter"]] <- renderPlot({
@@ -134,9 +130,34 @@ mod_back_exchange_server <- function(id, dat){
       
     })
     
+  
+  
+  ##
+  
+  
+  output[["uc_scaled"]] <- renderPlot({
+    
+    validate(need(!is.null(input[["res_data_rows_selected"]]), "Select peptide from the table to see the plot."))
+    
+    kin_dat <- HaDeX2::calculate_kinetics(dat = dat[[1]](),
+                                          state = input[["state"]], 
+                                          sequence = res_dat()[input[["res_data_rows_selected"]], "Sequence"],
+                                          start = res_dat()[input[["res_data_rows_selected"]], "Start"],
+                                          end = res_dat()[input[["res_data_rows_selected"]], "End"],
+                                          time_0 = as.numeric(input[["time_0"]]), 
+                                          time_100 = as.numeric(input[["time_100"]]))
+    
+    ret_ratio <- res_dat()[input[["res_data_rows_selected"]], "ret_ratio"]
+    
+    splitteR::plot_uc_scaled(kin_dat = kin_dat, 
+                   state = input[["state"]],
+                   ret = ret_ratio) +
+      ggplot2::theme_bw(base_size = 18) +
+      ggplot2::theme(legend.position = "bottom")
+    
   })
   
-  
+  })
 }
     
 ## To be copied in the UI

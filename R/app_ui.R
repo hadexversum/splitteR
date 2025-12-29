@@ -13,29 +13,29 @@ app_ui <- function(request) {
         mod_input_data_ui("input_data"),
         mod_settings_ui("split_settings")
       )
-      ),
-      mainPanel(
+    ),
+    mainPanel(
       fluidPage(
         navset_pill( 
-         nav_panel("Coverage",
-                   mod_coverage_plots_ui("coverage_plots"),
-                   mod_download_sub_csv_ui("subfragments")
-                   ),
-         nav_panel("UCs",
-                   mod_table_plot_uc_ui("uptake_curves")
-                   ),
-         nav_panel("Back-exchange",
-                   mod_back_exchange_ui("bex")
-                   )
+          nav_panel("Coverage",
+                    mod_coverage_plots_ui("coverage_plots"),
+                    mod_download_sub_csv_ui("subfragments")
+          ),
+          nav_panel("UCs",
+                    mod_table_plot_uc_ui("uptake_curves")
+          ),
+          nav_panel("Back-exchange",
+                    mod_back_exchange_ui("bex")
+          )
         )
-    )
+      )
     )
     ),
-      
+    
     includeCSS(path = app_sys("app/utils/datatable.css")),
     includeCSS(path = app_sys("app/utils/selectize.css"))
     
-    )
+  )
 }
 
 
@@ -64,7 +64,7 @@ golem_add_external_resources <- function() {
   library(HaDeX2)
   library(bslib)
   library(DT)
-
+  
   tags$head(
     favicon(),
     bundle_resources(
