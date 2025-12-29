@@ -34,7 +34,9 @@ mod_back_exchange_ui <- function(id) {
     p("max_exp_ret = deut_uptake(t = FD)/(deut_part*MaxUptake)"), 
     p("theo_ret = h_ret/MaxUptake"),
     p("ret_ratio = max_exp_ret/theo_ret"),
+    p("avg_rt = mean retention time for t = FD"),
     plotOutput(outputId = ns("res_scatter")),
+    plotOutput(outputId = ns("rt_vs_ratio")),
     plotOutput(outputId = ns("uc_scaled"))
     
   )
@@ -102,21 +104,44 @@ mod_back_exchange_server <- function(id, dat){
     
     output[["res_data"]] <- renderDT({
       
-      res_dat() %>%
+      res_dat_rt() %>%
         mutate(back_exchange = round(back_exchange, 4),
                err_back_exchange = round(err_back_exchange, 4),
                deut_uptake = round(deut_uptake, 4),
                h_ret = round(h_ret, 4),
+               avg_rt = round(avg_rt, 4),
                theo_ret = round(theo_ret, 4),
                ret_ratio = round(ret_ratio, 4),
                max_exp_ret = round(max_exp_ret, 4)) %>%
-        select(ID, Protein, Sequence, State, Start, End, Modification, seq_length, MaxUptake, deut_uptake, h_ret, theo_ret, max_exp_ret, ret_ratio, back_exchange, err_back_exchange)
+        select(ID, Protein, Sequence, State, Start, End, Modification, seq_length, MaxUptake, deut_uptake, h_ret, theo_ret, max_exp_ret, ret_ratio, back_exchange, err_back_exchange, avg_rt)
       
     },
     selection = "single")
  
+    rt_dat <- reactive({
+      
+      dat[[3]]() %>%
+        mutate(Exposure = round(as.numeric(Exposure, 4))) %>%
+        filter(Exposure == input[["time_100"]],
+               State == input[["state"]]) %>%
+        group_by(Protein, Start, End, Sequence, MaxUptake, State) %>%
+        summarise(avg_rt = mean(RT)) %>%
+        ungroup()
+      
+     
+     })
+    
+    res_dat_rt <- reactive({
+      
+      merge(res_dat(), rt_dat(), by = c("Protein", "Start", "End", "Sequence", "MaxUptake", "State"), all.x = TRUE)
+      
+      })
+    
+    ##
     
     output[["res_scatter"]] <- renderPlot({
+      
+      # browser()
       
       ggplot(res_dat()) +
         geom_segment(aes(x = Start, xend = End, y = ret_ratio, color = seq_length), size = 2) + 
@@ -133,6 +158,19 @@ mod_back_exchange_server <- function(id, dat){
   
   
   ##
+    
+    output[["rt_vs_ratio"]] <- renderPlot({
+      
+      res_dat_rt() %>%
+        ggplot() +
+        geom_point(aes(x = avg_rt, y = ret_ratio)) +
+        geom_hline(yintercept = 1, linewidth = 0.5, color = "red", linetype = "dashed", alpha = 0.3) + 
+        theme_bw(base_size = 18) + 
+        labs(x = "Mean RT for FD", 
+             y = "ret ratio")
+    })
+    
+    ##
   
   
   output[["uc_scaled"]] <- renderPlot({

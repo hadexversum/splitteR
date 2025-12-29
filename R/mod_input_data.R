@@ -53,7 +53,8 @@ mod_input_data_server <- function(id){
       data_file <- input[["data_file"]]
       
       if (is.null(data_file)) {
-        example_data_alpha
+        # example_data_alpha
+        HaDeX2::read_hdx(system.file(package = "splitteR", "app/data/alpha_uncut.csv"))
       } else {
         validate(need(try({
           file <- HaDeX2::read_hdx(data_file[["datapath"]])
@@ -90,6 +91,26 @@ mod_input_data_server <- function(id){
       else "Other data!"
     })
     
+    dat_rt_raw <- reactive({
+      data_file <- input[["data_file"]]
+      
+      if (is.null(data_file)) {
+        # example_data_alpha
+        read.csv(system.file(package = "splitteR", "./app/data/alpha_uncut.csv"))
+      } else {
+        validate(need(try({
+          file <- read.csv(data_file[["datapath"]])
+        }), "File does not fullfill requirements. Check file requirements!"))
+        file
+      }
+    })
+    
+    
+    dat_rt <- reactive({
+      
+      HRaDeX::omit_amino(dat = dat_rt_raw(), omit = input[["omit"]])
+      
+    })
     ### return values
     
     return(
@@ -108,14 +129,14 @@ mod_input_data_server <- function(id){
             )
           }
           
-        }))
-      )
-    )
+        }),
+        dat_rt
+        )))
+    
+    
+    
   })
-}
+  
+} 
     
-## To be copied in the UI
-# mod_input_data_ui("input_data_1")
     
-## To be copied in the server
-# mod_input_data_server("input_data_1")
