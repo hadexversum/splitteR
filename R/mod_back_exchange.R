@@ -35,9 +35,11 @@ mod_back_exchange_ui <- function(id) {
     p("theo_ret = h_ret/MaxUptake"),
     p("ret_ratio = max_exp_ret/theo_ret"),
     p("avg_rt = mean retention time for t = FD"),
+    p("ret_scale = MaxUptake*deut_part/deut_uptake(t=FD) = 1/max_exp_ret"),
     plotOutput(outputId = ns("res_scatter")),
     plotOutput(outputId = ns("rt_vs_ratio")),
-    plotOutput(outputId = ns("uc_scaled"))
+    plotOutput(outputId = ns("uc_scaled")),
+    p("Scaled uptake curve is the standard uptake curve times ret_scale parameter.")
     
   )
 }
@@ -91,7 +93,8 @@ mod_back_exchange_server <- function(id, dat){
         mutate(ID = 1:nrow(.),
                max_exp_ret = deut_uptake/(MaxUptake*as.numeric(input[["deut_part"]])),
                theo_ret = h_ret/MaxUptake,
-               ret_ratio = max_exp_ret/theo_ret)
+               ret_ratio = max_exp_ret/theo_ret, 
+               ret_scale = 1/max_exp_ret)
       
       res
       
@@ -112,8 +115,9 @@ mod_back_exchange_server <- function(id, dat){
                avg_rt = round(avg_rt, 4),
                theo_ret = round(theo_ret, 4),
                ret_ratio = round(ret_ratio, 4),
-               max_exp_ret = round(max_exp_ret, 4)) %>%
-        select(ID, Protein, Sequence, State, Start, End, Modification, seq_length, MaxUptake, deut_uptake, h_ret, theo_ret, max_exp_ret, ret_ratio, back_exchange, err_back_exchange, avg_rt)
+               max_exp_ret = round(max_exp_ret, 4),
+               ret_scale = round(ret_scale, 4)) %>%
+        select(ID, Protein, Sequence, State, Start, End, Modification, seq_length, MaxUptake, deut_uptake, h_ret, theo_ret, max_exp_ret, ret_scale, ret_ratio, back_exchange, err_back_exchange, avg_rt)
       
     },
     selection = "single")
@@ -185,11 +189,13 @@ mod_back_exchange_server <- function(id, dat){
                                           time_0 = as.numeric(input[["time_0"]]), 
                                           time_100 = as.numeric(input[["time_100"]]))
     
-    ret_ratio <- res_dat()[input[["res_data_rows_selected"]], "ret_ratio"]
+    # ret_ratio <- res_dat()[input[["res_data_rows_selected"]], "ret_ratio"]
+    
+    ret_scale <- res_dat()[input[["res_data_rows_selected"]], "ret_scale"]
     
     splitteR::plot_uc_scaled(kin_dat = kin_dat, 
                    state = input[["state"]],
-                   ret = ret_ratio) +
+                   ret = ret_scale) +
       ggplot2::theme_bw(base_size = 18) +
       ggplot2::theme(legend.position = "bottom")
     

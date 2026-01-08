@@ -4,7 +4,8 @@
 #' @param ret scaling parameter
 #' 
 #' This function plots two deuterium uptake curve:
-#' experimental and scaled by the retention parameter
+#' experimental and scaled by the retention parameter.
+#' 
 #' @export
 
 plot_uc_scaled <- function(kin_dat, 

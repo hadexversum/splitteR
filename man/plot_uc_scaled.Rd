@@ -12,7 +12,7 @@ plot_uc_scaled(kin_dat, state = unique(kin_dat[["State"]])[1], ret = 1)
 \item{ret}{scaling parameter
 
 This function plots two deuterium uptake curve:
-experimental and scaled by the retention parameter}
+experimental and scaled by the retention parameter.}
 }
 \description{
 Plots UC scaled with retention
