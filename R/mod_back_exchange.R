@@ -148,13 +148,13 @@ mod_back_exchange_server <- function(id, dat){
       # browser()
       
       ggplot(res_dat()) +
-        geom_segment(aes(x = Start, xend = End, y = ret_ratio, color = seq_length), size = 2) + 
+        geom_segment(aes(x = Start, xend = End, y = ret_scale, color = seq_length), size = 2) + 
         geom_hline(yintercept = 1, linewidth = 0.5, color = "red", linetype = "dashed", alpha = 0.3) + 
         scale_colour_gradientn(colours = terrain.colors(10)) +
         theme_bw(base_size = 18) +
         theme(legend.position = "bottom") +
         labs(x = "Peptide ID",
-             y = "exp/theo retention ratio",
+             y = "ret_scale",
              color = "Peptide length")
       
     })
@@ -171,7 +171,7 @@ mod_back_exchange_server <- function(id, dat){
         geom_hline(yintercept = 1, linewidth = 0.5, color = "red", linetype = "dashed", alpha = 0.3) + 
         theme_bw(base_size = 18) + 
         labs(x = "Mean RT for FD", 
-             y = "ret ratio")
+             y = "ret_ratio")
     })
     
     ##
