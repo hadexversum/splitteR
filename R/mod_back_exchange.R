@@ -36,10 +36,11 @@ mod_back_exchange_ui <- function(id) {
     p("ret_ratio = max_exp_ret/theo_ret"),
     p("avg_rt = mean retention time for t = FD"),
     p("ret_scale = MaxUptake*deut_part/deut_uptake(t=FD) = 1/max_exp_ret"),
+    plotOutput(outputId = ns("uc_scaled")),
+    p("Scaled uptake curve is the standard uptake curve times ret_scale parameter."),
     plotOutput(outputId = ns("res_scatter")),
     plotOutput(outputId = ns("rt_vs_ratio")),
-    plotOutput(outputId = ns("uc_scaled")),
-    p("Scaled uptake curve is the standard uptake curve times ret_scale parameter.")
+    plotOutput(outputId = ns("standard_bex"))
     
   )
 }
@@ -167,11 +168,11 @@ mod_back_exchange_server <- function(id, dat){
       
       res_dat_rt() %>%
         ggplot() +
-        geom_point(aes(x = avg_rt, y = ret_ratio)) +
+        geom_point(aes(x = avg_rt, y = ret_scale)) +
         geom_hline(yintercept = 1, linewidth = 0.5, color = "red", linetype = "dashed", alpha = 0.3) + 
         theme_bw(base_size = 18) + 
         labs(x = "Mean RT for FD", 
-             y = "ret_ratio")
+             y = "ret_scale")
     })
     
     ##
@@ -198,6 +199,21 @@ mod_back_exchange_server <- function(id, dat){
                    ret = ret_scale) +
       ggplot2::theme_bw(base_size = 18) +
       ggplot2::theme(legend.position = "bottom")
+    
+  })
+  
+  ##
+  
+  output[["standard_bex"]] <- renderPlot({
+    
+    # browser()
+    
+    bex_dat <- calculate_back_exchange(dat = dat[[1]](), 
+                                       states = input[["state"]],
+                                       time_100 = as.numeric(input[["time_100"]]))
+    
+    HaDeX2::plot_coverage_heatmap(bex_dat, 
+                                  value = "back_exchange")
     
   })
   
