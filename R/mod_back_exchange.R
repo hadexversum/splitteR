@@ -123,6 +123,8 @@ mod_back_exchange_server <- function(id, dat){
     },
     selection = "single")
  
+    ##
+    
     rt_dat <- reactive({
       
       dat[[3]]() %>%
@@ -135,6 +137,8 @@ mod_back_exchange_server <- function(id, dat){
       
      
      })
+    
+    ##
     
     res_dat_rt <- reactive({
       
