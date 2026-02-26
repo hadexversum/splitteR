@@ -17,7 +17,7 @@
 create_subsections_dataset <- function(dat, 
                                        subsections){
   
-  mass_dat <- HaDeX::calculate_exp_masses_per_replicate(dat)
+  mass_dat <- HaDeX2::calculate_exp_masses_per_replicate(dat)
   
   peptides <- dat %>%
     select(Sequence, Start, End) %>%
