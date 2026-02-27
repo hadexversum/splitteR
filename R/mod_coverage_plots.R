@@ -7,11 +7,13 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-mod_coverage_plots_ui <- function(id) {
+mod_coverage_ui <- function(id) {
   ns <- NS(id)
   tagList(
  
+    p("Original peptide pool coverage:"),
     ggiraph::girafeOutput(outputId = ns("peptide_coverage_plot"), width = "80%"),
+    p("Sub-localization by the subtraction:"),
     ggiraph::girafeOutput(outputId = ns("subfragments_coverage_plot"), width = "80%")
   )
 }
@@ -19,12 +21,13 @@ mod_coverage_plots_ui <- function(id) {
 #' coverage_plots Server Functions
 #'
 #' @noRd 
-mod_coverage_plots_server <- function(id, dat, subsections){
+mod_coverage_server <- function(id, dat, subsections){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
  
+    
     output[["peptide_coverage_plot"]] <- ggiraph::renderGirafe({
-      ggiraph::girafe(ggobj = HaDeX2::plot_coverage(dat[[1]](), interactive = TRUE),
+      ggiraph::girafe(ggobj = HaDeX2::plot_coverage(dat(), interactive = TRUE),
                       width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
     })
     
@@ -39,7 +42,7 @@ mod_coverage_plots_server <- function(id, dat, subsections){
     
     dat_subsections <- reactive({
       # browser()
-      create_subsections_dataset(dat = dat[[1]](), subsections = subsections())
+      create_subsections_dataset(dat = dat(), subsections = subsections())
     })
     
   })

@@ -63,7 +63,7 @@ mod_input_data_server <- function(id){
       }
     })
     
-    data_source <- reactive({ attr(dat_raw(), "source") })
+    # data_source <- reactive({ attr(dat_raw(), "source") })
     
     dat <- reactive({
       
@@ -91,48 +91,33 @@ mod_input_data_server <- function(id){
       else "Other data!"
     })
     
-    dat_rt_raw <- reactive({
-      data_file <- input[["data_file"]]
-      
-      if (is.null(data_file)) {
-        # example_data_alpha
-        read.csv(system.file(package = "splitteR", "./app/data/alpha_uncut.csv"))
-      } else {
-        validate(need(try({
-          file <- read.csv(data_file[["datapath"]])
-        }), "File does not fullfill requirements. Check file requirements!"))
-        file
-      }
-    })
-    
-    
-    dat_rt <- reactive({
-      
-      HRaDeX::omit_amino(dat = dat_rt_raw(), omit = input[["omit"]])
-      
-    })
+  
     ### return values
     
     return(
-      c(
-        dat,
-        list(input_info = reactive({
-          data_file <- input[["data_file"]]
-          
-          if (is.null(data_file)) {
-            list(is_example = TRUE)
-          } else {
-            list(
-              is_example = FALSE,
-              name = data_file[["name"]],
-              hash = tools::md5sum(as.character(data_file[["datapath"]]))
-            )
-          }
-          
-        }),
-        dat_rt
-        )))
-    
+      dat
+    )
+        
+        
+    #     list(input_info = reactive({
+    #       data_file <- input[["data_file"]]
+    #       
+    #       if (is.null(data_file)) {
+    #         list(is_example = TRUE)
+    #       } else {
+    #         list(
+    #           is_example = FALSE,
+    #           name = data_file[["name"]],
+    #           hash = tools::md5sum(as.character(data_file[["datapath"]]))
+    #         )
+    #       }
+    #       
+    #     }),
+    #     dat_rt
+    #     ))
+    # 
+    # )
+    # 
     
     
   })

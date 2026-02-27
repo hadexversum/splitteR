@@ -27,9 +27,10 @@ mod_settings_ui <- function(id) {
     numericInput(inputId = ns("deut_part"),
                  label = "Deuterium concentration:",
                  value = 0.9),
-    actionButton(inputId = ns("download_csv"),
-                 label = "Download file")
-    
+
+    checkboxInput(inputId = ns("if_rescaled"),
+                  label = "Do you want to rescale the data?"),
+    br()
   )
 }
     
@@ -40,7 +41,7 @@ mod_settings_server <- function(id, dat){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
     
-    states <- reactive(unique(dat[[1]]()[["State"]]))
+    states <- reactive(unique(dat()[["State"]]))
     
     observe({
       
@@ -52,17 +53,28 @@ mod_settings_server <- function(id, dat){
     observe({
       
       updateSelectInput(session, inputId = "time_0", 
-                        choices = unique(dat[[1]][["Exposure"]]),
-                        selected = min(unique(dat[[1]][["Exposure"]])))
+                        choices = unique(dat()[["Exposure"]]),
+                        selected = min(unique(dat()[["Exposure"]])))
     })
     
     observe({
       
       updateSelectInput(session, inputId = "time_100", 
-                        choices = unique(dat[[1]][["Exposure"]]),
-                        selected = max(unique(dat[[1]][["Exposure"]])))
+                        choices = unique(dat()[["Exposure"]]),
+                        selected = max(unique(dat()[["Exposure"]])))
     })
  
+  params <- reactive(
+    data.frame(
+      state = input[["selected_state"]],
+      time_0 = as.numeric(input[["time_0"]]),
+      time_100 = as.numeric(input[["time_100"]]),
+      deut_part = as.numeric(input[["deut_part"]]),
+      if_rescaled = input[["if_rescaled"]]
+    )
+  )  
+    
+  return(params)
     
   })
 }

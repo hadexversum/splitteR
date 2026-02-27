@@ -10,22 +10,25 @@ app_ui <- function(request) {
     sidebarLayout(
     sidebarPanel(
     fluidPage(
+      actionButton(inputId = "test", label = "browse!"),
         mod_input_data_ui("input_data"),
-        mod_settings_ui("split_settings")
+        mod_settings_ui("split_settings"),
+        mod_download_sub_csv_ui("subfragments")
       )
     ),
     mainPanel(
       fluidPage(
         navset_pill( 
           nav_panel("Coverage",
-                    mod_coverage_plots_ui("coverage_plots"),
-                    mod_download_sub_csv_ui("subfragments")
+                    mod_coverage_ui("coverage_plots")
+                    
+                    
           ),
-          nav_panel("UCs",
+          nav_panel("Uptake curves",
                     mod_table_plot_uc_ui("uptake_curves")
           ),
-          nav_panel("Back-exchange",
-                    mod_back_exchange_ui("bex")
+          nav_panel("Rescalling",
+                    mod_rescale_ui("rescale")
           )
         )
       )
