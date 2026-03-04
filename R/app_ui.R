@@ -7,37 +7,43 @@
 app_ui <- function(request) {
   tagList(
     golem_add_external_resources(),
-    sidebarLayout(
-    sidebarPanel(
+    apply_ui_settings(),
+    shinyjs::useShinyjs(),
     fluidPage(
-      actionButton(inputId = "test", label = "browse!"),
-        mod_input_data_ui("input_data"),
-        mod_settings_ui("split_settings"),
-        mod_download_sub_csv_ui("subfragments")
-      )
-    ),
-    mainPanel(
-      fluidPage(
-        navset_pill( 
-          nav_panel("Coverage",
-                    mod_coverage_ui("coverage_plots")
-                    
-                    
-          ),
-          nav_panel("Uptake curves",
-                    mod_table_plot_uc_ui("uptake_curves")
-          ),
-          nav_panel("Rescalling",
-                    mod_rescale_ui("rescale")
+      br(),
+      sidebarLayout(
+      sidebarPanel(
+        class = "HaDeX-tab-content-element",
+        br(),
+        img(src='./www/prep_logo.png', width = "40%", align = "center"),
+        br(),
+        br(),
+        fluidPage(
+          # actionButton(inputId = "test", label = "browse!"),
+            mod_input_data_ui("input_data"),
+            mod_settings_ui("split_settings"),
+            mod_download_sub_csv_ui("subfragments")
           )
-        )
+        ),
+        mainPanel(
+          fluidPage(
+            tabsetPanel( 
+              tabPanel("Coverage",
+                        mod_coverage_ui("coverage_plots")
+                        
+                        
+              ),
+              tabPanel("Uptake curves",
+                        mod_table_plot_uc_ui("uptake_curves")
+              ),
+              tabPanel("Rescalling",
+                        mod_rescale_ui("rescale")
+              )
+            )
+          )
+      )
       )
     )
-    ),
-    
-    includeCSS(path = app_sys("app/utils/datatable.css")),
-    includeCSS(path = app_sys("app/utils/selectize.css"))
-    
   )
 }
 
@@ -72,10 +78,17 @@ golem_add_external_resources <- function() {
     favicon(),
     bundle_resources(
       path = app_sys("app/www"),
-      app_title = "splitteR"
+      app_title = "prepHaDeX"
     ),
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
     golem::activate_js()
   )
+}
+
+#' @noRd
+apply_ui_settings <- function(){
+  
+  options(shiny.maxRequestSize = 10 * 1024^2) 
+  
 }

@@ -10,7 +10,7 @@
 mod_coverage_ui <- function(id) {
   ns <- NS(id)
   tagList(
- 
+    br(),
     p("Original peptide pool coverage:"),
     ggiraph::girafeOutput(outputId = ns("peptide_coverage_plot"), width = "80%"),
     p("Sub-localization by the subtraction:"),
