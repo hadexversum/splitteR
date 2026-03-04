@@ -14,11 +14,11 @@ mod_rescale_ui <- function(id) {
     p("What do we see?"),
     p("h_ret = retention for peptide based on Hamuro table - value in Daltons"),
     p("deut_uptake = deuterium uptake for peptide: m(t = FD) - m(t_0) - value in Daltons"),
-    p("max_exp_ret = deut_uptake(t = FD)/(deut_part*MaxUptake)"), 
-    p("theo_ret = h_ret/MaxUptake"),
-    p("ret_ratio = max_exp_ret/theo_ret"),
+    # p("max_exp_ret = deut_uptake(t = FD)/(deut_part*MaxUptake)"), 
+    # p("theo_ret = h_ret/MaxUptake"),
+    # p("ret_ratio = max_exp_ret/theo_ret"),
     # p("avg_rt = mean retention time for t = FD"),
-    p("ret_scale = MaxUptake*deut_part/deut_uptake(t=FD) = 1/max_exp_ret"),
+    p("ret_scale = MaxUptake*deut_part/deut_uptake(t=FD)"), #  = 1/max_exp_ret
     plotOutput(outputId = ns("uc_scaled")),
     # p("Scaled uptake curve is the standard uptake curve times ret_scale parameter."),
     plotOutput(outputId = ns("res_scatter")),
@@ -84,7 +84,9 @@ mod_rescale_server <- function(id, dat, state, time_100, time_0, deut_part){
                ret_ratio = round(ret_ratio, 4),
                max_exp_ret = round(max_exp_ret, 4),
                ret_scale = round(ret_scale, 4)) %>%
-        select(ID, Protein, Sequence, State, Start, End, Modification, seq_length, MaxUptake, deut_uptake, h_ret, theo_ret, max_exp_ret, ret_scale, ret_ratio, back_exchange, err_back_exchange) #, avg_rt)
+        select(Protein, Sequence, State, Start, End, MaxUptake, deut_uptake, h_ret, ret_scale, back_exchange) #, avg_rt)
+      
+        # select(ID, Protein, Sequence, State, Start, End, Modification, seq_length, MaxUptake, deut_uptake, h_ret, theo_ret, max_exp_ret, ret_scale, ret_ratio, back_exchange, err_back_exchange) #, avg_rt)
       
     },
     selection = "single")

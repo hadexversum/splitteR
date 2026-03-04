@@ -19,11 +19,11 @@ mod_download_sub_csv_ui <- function(id) {
 #' download_sub_csv Server Functions
 #'
 #' @noRd 
-mod_download_sub_csv_server <- function(id, dat, dat_subsections){
+mod_download_sub_csv_server <- function(id, dat, state, time_0, time_100, deut_part){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
  
-    states <- reactive(unique(dat[[1]]()[["State"]]))
+    states <- reactive(unique(dat()[["State"]]))
     
     observe({
       showModal(
@@ -52,23 +52,29 @@ mod_download_sub_csv_server <- function(id, dat, dat_subsections){
       )
     }) %>% bindEvent(input[["get_downloads"]])
     
-    downlad_dat <- reactive({
-      
-      filter(dat_subsections(), State %in% input[["download_states"]])
-      
-    })
-    
-    file_name <- reactive({
-      unique(dat[[1]]()[["Protein"]])
-    })
+   download_dat <- reactive({
+     
+     # dat_states <- filter(dat, State %in% input[["download_states"]])
+     
+     lapply(input[["download_states"]], function(state){
+       
+       print(paste0("Creating data for ", state))
+       
+       state_dat <- filter(dat(), State == state)
+       
+       create_subsections_dataset(dat = state_dat, 
+                                  subsections = create_subsections(state_dat))
+     }) %>% bind_rows()
+     
+   })
     
     # download file
     
     output[["download_button"]] <- downloadHandler(
 
-      filename = paste0("subsections_", file_name(), ".csv"),
+      filename = paste0("subsections_", unique(dat()[["Protein"]]), ".csv"),
       content = function(file){
-        write.csv(downlad_dat(),
+        write.csv(download_dat(),
                   file = file,
                   quote = FALSE,
                   row.names = FALSE)}

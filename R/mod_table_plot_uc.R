@@ -31,7 +31,7 @@ mod_table_plot_uc_server <- function(id, dat, subsections){
     
     subsection_dat <- reactive({
       
-      get_subsection_data(dat[[1]](), subsection = subsections()[input[["subsections_list_rows_selected"]], ])
+      get_subsection_data(dat(), subsection = subsections()[input[["subsections_list_rows_selected"]], ])
       
     })
     
@@ -44,18 +44,18 @@ mod_table_plot_uc_server <- function(id, dat, subsections){
       
       if(subsections()[input[["subsections_list_rows_selected"]], "common"] == "origin"){
         
-        plt <- dat[[1]]() %>%
+        plt <- dat() %>%
           filter(Sequence == subsections()[input[["subsections_list_rows_selected"]], "sub_sequence"],
                  Start == subsections()[input[["subsections_list_rows_selected"]], "sub_start"],
                  End == subsections()[input[["subsections_list_rows_selected"]], "sub_end"]) %>%
         calculate_peptide_kinetics(.,
-                                   states = dat[[1]]()[["State"]][1]) %>%
+                                   states = dat()[["State"]][1]) %>%
         plot_uptake_curve(.) +
           ggplot2::ylim(c(0, NA))
         
       } else {
         
-        plt <- plot_uc_with_origin(dat = dat[[1]](), 
+        plt <- plot_uc_with_origin(dat = dat(), 
                                    subsection = subsections()[input[["subsections_list_rows_selected"]], ],
                                    subsection_dat = subsection_dat())
         
