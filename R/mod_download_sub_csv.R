@@ -19,7 +19,7 @@ mod_download_sub_csv_ui <- function(id) {
 #' download_sub_csv Server Functions
 #'
 #' @noRd 
-mod_download_sub_csv_server <- function(id, dat, state, time_0, time_100, deut_part){
+mod_download_sub_csv_server <- function(id, dat, settings){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
  
@@ -40,12 +40,13 @@ mod_download_sub_csv_server <- function(id, dat, state, time_0, time_100, deut_p
             actionButton(inputId = ns("download_open_hadex2"),
                          label = "Open HaDeX2",
                          icon = icon("th"),
-                         onclick ="window.open('https://hadex2.mslab-ibb.pl/)"),
+                         onclick ="window.open('https://hadex2.mslab-ibb.pl/')"),
             actionButton(inputId = ns("download_open_hradex"),
                          label = "Open HRaDeX",
                          icon = icon("th"),
-                         onclick ="window.open('https://hradex.mslab-ibb.pl/)"),
-            p("Creating a downloadable file may take a while!")
+                         onclick ="window.open('https://hradex.mslab-ibb.pl/')"),
+            p("Creating a downloadable file may take a while!"),
+            p("At this moment, the download only works for unscaled data. This will change soon.")
             
           )
         )
@@ -53,8 +54,6 @@ mod_download_sub_csv_server <- function(id, dat, state, time_0, time_100, deut_p
     }) %>% bindEvent(input[["get_downloads"]])
     
    download_dat <- reactive({
-     
-     # dat_states <- filter(dat, State %in% input[["download_states"]])
      
      lapply(input[["download_states"]], function(state){
        

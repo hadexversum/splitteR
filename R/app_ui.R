@@ -18,6 +18,7 @@ app_ui <- function(request) {
         img(src='./www/prep_logo.png', width = "40%", align = "center"),
         br(),
         br(),
+        span("Be careful! This app is still under development.  ", style="color:red"),
         fluidPage(
           # actionButton(inputId = "test", label = "browse!"),
             mod_input_data_ui("input_data"),

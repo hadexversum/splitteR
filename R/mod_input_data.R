@@ -54,7 +54,7 @@ mod_input_data_server <- function(id){
       
       if (is.null(data_file)) {
         # example_data_alpha
-        HaDeX2::read_hdx(system.file(package = "splitteR", "app/data/alpha_uncut.csv"))
+        HaDeX2::read_hdx(system.file(package = "splitteR", "app/data/alpha.csv"))
       } else {
         validate(need(try({
           file <- HaDeX2::read_hdx(data_file[["datapath"]])
@@ -74,6 +74,7 @@ mod_input_data_server <- function(id){
     ### other outputs
     
     output[["data_file_info"]] <- renderText({
+      
       
       # paste0(
       #   if (is.null(input[["data_file"]]))

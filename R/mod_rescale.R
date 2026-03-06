@@ -31,7 +31,7 @@ mod_rescale_ui <- function(id) {
 #' back_exchange Server Functions
 #'
 #' @noRd 
-mod_rescale_server <- function(id, dat, state, time_100, time_0, deut_part){
+mod_rescale_server <- function(id, dat, settings){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
   
@@ -39,15 +39,15 @@ mod_rescale_server <- function(id, dat, state, time_100, time_0, deut_part){
     res_dat <- reactive({
       
       kin_dat_fd <- HaDeX2::calculate_state_uptake(dat(),
-                                                   state = state, 
-                                                   time_0 = time_0, 
-                                                   time_t = time_100,
-                                                   time_100 = time_100) %>%
+                                                   state = settings()[["state"]], 
+                                                   time_0 = settings()[["time_0"]], 
+                                                   time_t = settings()[["time_100"]],
+                                                   time_100 = settings()[["time_100"]]) %>%
         select(Protein, Sequence, Start, End, MaxUptake, deut_uptake, Modification)
       
       h_res <- HaDeX2::calculate_back_exchange(dat = dat(),
-                                               states = state,
-                                               time_100 = time_100) %>%
+                                               states = settings()[["state"]],
+                                               time_100 = settings()[["time_100"]]) %>%
         mutate(seq_length = nchar(Sequence))
       
       h_res["h_ret"] <- lapply(1:nrow(h_res), function(i){
@@ -57,7 +57,7 @@ mod_rescale_server <- function(id, dat, state, time_100, time_0, deut_part){
       res <- merge(kin_dat_fd, h_res, by = c("Protein", "Sequence", "Start", "End", "Modification")) %>%
         arrange(Start, End) %>%
         mutate(ID = 1:nrow(.),
-               max_exp_ret = deut_uptake/(MaxUptake*deut_part),
+               max_exp_ret = deut_uptake/(MaxUptake*settings()[["deut_part"]]),
                theo_ret = h_ret/MaxUptake,
                ret_ratio = max_exp_ret/theo_ret, 
                ret_scale = 1/max_exp_ret)
@@ -154,25 +154,23 @@ mod_rescale_server <- function(id, dat, state, time_100, time_0, deut_part){
     
     validate(need(!is.null(input[["res_data_rows_selected"]]), "Select peptide from the table to see the plot."))
     
-    # browser()
-    
     kin_dat <- HaDeX2::calculate_kinetics(dat = dat(),
-                                          state = state, 
+                                          state = settings()[["state"]], 
                                           sequence = res_dat()[input[["res_data_rows_selected"]], "Sequence"],
                                           start = res_dat()[input[["res_data_rows_selected"]], "Start"],
                                           end = res_dat()[input[["res_data_rows_selected"]], "End"],
-                                          time_0 = time_0, 
-                                          time_100 = time_100)
+                                          time_0 = settings()[["time_0"]], 
+                                          time_100 = settings()[["time_100"]])
     
     # ret_ratio <- res_dat()[input[["res_data_rows_selected"]], "ret_ratio"]
     
     ret_scale <- res_dat()[input[["res_data_rows_selected"]], "ret_scale"]
     
     splitteR::plot_uc_scaled(kin_dat = kin_dat, 
-                   state = state,
+                   state = settings()[["state"]],
                    ret = ret_scale) +
       ggplot2::theme_bw(base_size = 18) +
-      ggplot2::theme(legend.position = "bottom")
+      ggplot2::theme(legend.position = "bottom") 
     
   })
   
@@ -183,8 +181,8 @@ mod_rescale_server <- function(id, dat, state, time_100, time_0, deut_part){
     # browser()
     
     bex_dat <- calculate_back_exchange(dat = dat(), 
-                                       states = state,
-                                       time_100 = time_100)
+                                       states = settings()[["state"]],
+                                       time_100 = settings()[["time_100"]])
     
     HaDeX2::plot_coverage_heatmap(bex_dat, 
                                   value = "back_exchange")

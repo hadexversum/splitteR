@@ -34,6 +34,7 @@ mod_coverage_server <- function(id, dat, subsections){
     # subsections <- reactive({ create_subsections(dat[[1]]()) })
     
     output[["subfragments_coverage_plot"]] <- ggiraph::renderGirafe({
+      
       ggiraph::girafe(ggobj = plot_subs_cov(dat = dplyr::rename(subsections(), Sequence = sub_sequence, Start = sub_start, End = sub_end), interactive = TRUE),
                       width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE)
                       )
