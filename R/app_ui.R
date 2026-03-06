@@ -8,7 +8,6 @@ app_ui <- function(request) {
   tagList(
     golem_add_external_resources(),
     apply_ui_settings(),
-    shinyjs::useShinyjs(),
     fluidPage(
       br(),
       sidebarLayout(
