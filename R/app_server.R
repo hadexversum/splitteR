@@ -70,5 +70,9 @@ app_server <- function(input, output, session) {
   mod_rescale_server("rescale", 
                      dat = dat,
                      settings = settings)
+  
+  mod_sequence_work_server("sequences",
+                           dat = dat,
+                           settings = settings)
 
 }

@@ -32,11 +32,11 @@ mod_input_data_ui <- function(id) {
             verbatimTextOutput(ns("data_file_info"))
           )
         )
-      ),
-      checkboxInput(inputId = ns("omit"),
-                    label = "Omit first amino?",
-                    value = TRUE),
-      p("Omitting first amino is necessary when working with subsections. ")
+      ) #,
+      # checkboxInput(inputId = ns("omit"),
+      #               label = "Omit first amino?",
+      #               value = TRUE),
+      # p("Omitting first amino is necessary when working with subsections. ")
     )
     # )
   )
@@ -67,7 +67,9 @@ mod_input_data_server <- function(id){
     
     dat <- reactive({
       
-      HRaDeX::omit_amino(dat = dat_raw(), omit = input[["omit"]])
+      dat_raw()
+      
+      # HRaDeX::omit_amino(dat = dat_raw(), omit = input[["omit"]])
              
     })
     

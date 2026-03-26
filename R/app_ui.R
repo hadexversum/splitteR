@@ -38,7 +38,9 @@ app_ui <- function(request) {
               ),
               tabPanel("Rescalling",
                         mod_rescale_ui("rescale")
-              )
+              ),
+              tabPanel("Sequences",
+                       mod_sequence_work_ui("sequences"))
             )
           )
       )
