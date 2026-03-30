@@ -3,6 +3,8 @@
 #' @param sequence peptide sequence
 #' @param thereshold cut-off value of hamuro retention
 #' 
+#' @importFrom dplyr coalesce
+#' 
 #' @description
 #' In this convention, the residue in upper case indicates a presence
 #' of peptide bond proceeding it that is able to undergo the exchange.
@@ -14,6 +16,9 @@
 #' due to its structure, is blocking the hydrogen from proceeding bond from exchange.
 #' 
 #' @return peptide sequence with lower and upper case
+#' 
+#' @examples
+#' get_sequence_bonds("ALGKYGPADVE")
 #' 
 #' @export
 

@@ -45,6 +45,9 @@ mod_download_sub_csv_server <- function(id, dat, settings){
                          label = "Open HRaDeX",
                          icon = icon("th"),
                          onclick ="window.open('https://hradex.mslab-ibb.pl/')"),
+            checkboxInput(inputId = ns("change_sequences"),
+                          label = "Use sequence convention",
+                          value = TRUE),
             p("Creating a downloadable file may take a while!"),
             p("At this moment, the download only works for unscaled data. This will change soon.")
             
@@ -53,13 +56,23 @@ mod_download_sub_csv_server <- function(id, dat, settings){
       )
     }) %>% bindEvent(input[["get_downloads"]])
     
+   ## data after sequence transformation
+    
+   current_dat <- reactive({
+     
+     if(input[["change_sequences"]]){
+       replace_sequences(dat())
+     } else dat()
+     
+   })
+    
    download_dat <- reactive({
      
      lapply(input[["download_states"]], function(state){
        
        print(paste0("Creating data for ", state))
        
-       state_dat <- filter(dat(), State == state)
+       state_dat <- filter(current_dat(), State == state)
        
        create_subsections_dataset(dat = state_dat, 
                                   subsections = create_subsections(state_dat))
@@ -71,7 +84,7 @@ mod_download_sub_csv_server <- function(id, dat, settings){
     
     output[["download_button"]] <- downloadHandler(
 
-      filename = paste0("subsections_", unique(dat()[["Protein"]]), ".csv"),
+      filename = paste0("subsections_", unique(current_dat()[["Protein"]]), ".csv"),
       content = function(file){
         write.csv(download_dat(),
                   file = file,
