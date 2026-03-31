@@ -28,13 +28,20 @@ mod_download_sub_csv_server <- function(id, dat, settings){
     observe({
       showModal(
         modalDialog(
-          title = "Export subfragment data for HaDeX2/HRaDeX",
+          title = "Export data for HaDeX2/HRaDeX",
           p("The data is not transfered automatically, please do it manually."),
           wellPanel(
             checkboxGroupInput(inputId = ns("download_states"),
                                label = "Select states to import:",
                                choices = states(),
                                selected = states()),
+            checkboxInput(inputId = ns("change_sequences"),
+                          label = "Use sequence convention",
+                          value = TRUE),
+            checkboxInput(inputId = ns("use_subfragments"),
+                          label = "Export subfragments",
+                          value = TRUE),
+            br(),
             downloadButton(outputId = ns("download_button"),
                            label = "Create file"),
             actionButton(inputId = ns("download_open_hadex2"),
@@ -45,9 +52,7 @@ mod_download_sub_csv_server <- function(id, dat, settings){
                          label = "Open HRaDeX",
                          icon = icon("th"),
                          onclick ="window.open('https://hradex.mslab-ibb.pl/')"),
-            checkboxInput(inputId = ns("change_sequences"),
-                          label = "Use sequence convention",
-                          value = TRUE),
+            
             p("Creating a downloadable file may take a while!"),
             p("At this moment, the download only works for unscaled data. This will change soon.")
             
@@ -65,8 +70,8 @@ mod_download_sub_csv_server <- function(id, dat, settings){
      } else dat()
      
    })
-    
-   download_dat <- reactive({
+   
+  subs_dat <- reactive({
      
      lapply(input[["download_states"]], function(state){
        
@@ -79,12 +84,35 @@ mod_download_sub_csv_server <- function(id, dat, settings){
      }) %>% bind_rows()
      
    })
+  
+  download_dat <- reactive({
+    
+    # browser()
+    
+    if(input[["use_subfragments"]]){
+      subs_dat()
+    } else {
+      current_dat() %>%
+        mutate(Fragment = "",
+               RT = 1)
+    }
+    
+  })
+  
+  download_filename <- reactive({
+    
+    if(input[["use_subfragments"]]){
+      paste0("subsections_", unique(current_dat()[["Protein"]]), ".csv")
+    } else {
+      paste0("dat_", unique(current_dat()[["Protein"]]), ".csv")
+    }
+  })
     
     # download file
     
     output[["download_button"]] <- downloadHandler(
 
-      filename = paste0("subsections_", unique(current_dat()[["Protein"]]), ".csv"),
+      filename = function(){ download_filename() } ,
       content = function(file){
         write.csv(download_dat(),
                   file = file,
