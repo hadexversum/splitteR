@@ -22,7 +22,8 @@ create_sequence_list <- function(dat){
     select(Sequence, Start, End) %>%
     unique(.) %>%
     rowwise() %>%
-    mutate(seq_bond = get_sequence_bonds(sequence = Sequence))
+    mutate(seq_bond = get_sequence_bonds(sequence = Sequence),
+           n_bonds = stringr::str_count(seq_bond, "[A-Z]"))
   
   return(peptide_list)
 }
@@ -33,7 +34,9 @@ create_sequence_list <- function(dat){
 #' 
 #' @description The original peptide sequences are 
 #' replaced with the peptide convention - described in 
-#' the get_sequence_bonds function.
+#' the get_sequence_bonds function. Moreover the 
+#' maximal uptake value is calculated based on the 
+#' number of exchangeable bonds according to the convention.
 #' 
 #' @examples
 #' replace_sequences(alpha_dat)
@@ -45,8 +48,9 @@ replace_sequences <- function(dat){
   new_peptide_list <- create_sequence_list(dat)
   
   fin <- merge(dat, new_peptide_list, by = c("Sequence", "Start", "End")) %>%
-    select(-Sequence) %>%
-    rename(Sequence = seq_bond) %>%
+    select(-Sequence, -MaxUptake) %>%
+    rename(Sequence = seq_bond,
+           MaxUptake = n_bonds) %>%
     select(Sequence, everything()) %>%
     arrange(Start, End)
   
