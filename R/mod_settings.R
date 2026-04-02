@@ -11,11 +11,15 @@ mod_settings_ui <- function(id) {
   ns <- NS(id)
   tagList(
  
+    splitLayout(
     radioButtons(inputId = ns("selected_state"),
                  label = "Select state to see its coverage:",
                  choices = c("state_1", "state_2"),
                  selected = "state_1"
                  ),
+    div({
+      span("Peptide bonds convention is used!", style="color:red")
+    })),
     splitLayout(
     selectInput(inputId = ns("time_0"),
                 label = "Select no deut timepoint",

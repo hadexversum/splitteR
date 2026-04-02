@@ -10,7 +10,8 @@ app_server <- function(input, output, session) {
   
   settings <- mod_settings_server("split_settings", dat = dat)
   
-  subsections <- reactive({ create_subsections(dat()) })
+  subsections <- reactive({ create_subsections(dat(),
+                                               use_convention = TRUE) })
   
   mod_coverage_server("coverage_plots", dat = dat, subsections = subsections)
   
@@ -53,7 +54,8 @@ app_server <- function(input, output, session) {
       state_dat <- filter(dat(), State == settings()[["state"]])
       
       create_subsections_dataset(dat = state_dat, 
-                                 subsections = create_subsections(state_dat))
+                                 subsections = create_subsections(state_dat,
+                                                                  use_convention = TRUE))
     
   })
   

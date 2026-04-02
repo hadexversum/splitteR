@@ -67,7 +67,7 @@ mod_input_data_server <- function(id){
     
     dat <- reactive({
       
-      dat_raw()
+      splitteR::replace_sequences(dat = dat_raw())
       
       # HRaDeX::omit_amino(dat = dat_raw(), omit = input[["omit"]])
              
