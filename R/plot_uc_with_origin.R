@@ -56,6 +56,7 @@ plot_uc_with_origin <- function(dat,
                                             fill = Sequence),  alpha = 0.15) + 
       scale_x_log10() + 
       ylim(c(low_y-1, NA)) +
+      geom_hline(yintercept = 0, linetype = "dotted", size = 0.25) +
       theme(legend.position = "bottom") +
       labs(title = paste0("Deuterium uptake for subsection ", sub_kin_dat[["Sequence"]][1], " and the original peptides"),
            x = "Exposure [log(min)]",

@@ -77,7 +77,7 @@ find_subs_end_with_convention <- function(tmp_dat){
       sub_sequence <- substring(longer_sequence, 1, sub_sequence_length)
       
       
-      subs <- rbind(subs, data.frame(sub_sequence = sub_sequence, sub_start = longer_pep[["Start"]] + shorter_omit, sub_end = shorter_pep[["Start"]] -1, 
+      subs <- rbind(subs, data.frame(sub_sequence = sub_sequence, sub_start = longer_pep[["Start"]], sub_end = shorter_pep[["Start"]] -1 + shorter_omit, 
                                      longer_id = longer_pep[["id"]], shorter_id = shorter_pep[["id"]], common = "end", id = NA,
                                      longer_sequence = longer_pep[["Sequence"]], longer_start = longer_pep[["Start"]], longer_end = longer_pep[["End"]], 
                                      shorter_sequence = shorter_pep[["Sequence"]], shorter_start = shorter_pep[["Start"]], shorter_end = shorter_pep[["End"]]))
