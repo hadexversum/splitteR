@@ -30,6 +30,7 @@ calculate_rescaled_uptake <- function(pep_dat,
                                 Center = sc_uptake, 
                                 MaxUptake = MaxUptake, 
                                 MHP = MHP,
+                                Modification = NA,
                                 File = paste0("file_", Exposure),
                                 Inten = 1, 
                                 z = 1,
@@ -105,6 +106,7 @@ create_rescaled_uptake_dataset <- function(dat,
         mutate(Start = as.numeric(Start),
                End = as.numeric(End),
                Exposure = as.numeric(Exposure),
+               Modification = NA,
                Center = as.numeric(Center)) %>%
         select(-sc_uptake)
       
@@ -119,6 +121,7 @@ create_rescaled_uptake_dataset <- function(dat,
                z = 1) %>%
         mutate(Start = as.numeric(Start),
                End = as.numeric(End),
+               Modification = NA,
                Exposure = as.numeric(Exposure),
                Center = as.numeric(Center)) %>%
         select(-sc_uptake)
