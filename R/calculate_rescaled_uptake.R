@@ -50,18 +50,25 @@ calculate_rescaled_uptake <- function(pep_dat,
 
 #' @examples
 #' ret_params <- create_retention_dataset(alpha_dat, state = "Alpha_KSCN")
-#' create_rescaled_uptake_dataset(alpha_dat, ret_params)
+#' x <- create_rescaled_uptake_dataset(alpha_dat, ret_params, state = "Alpha_KSCN")
+#' xx <- create_rescaled_uptake_dataset(alpha_dat, ret_params, for_download = TRUE)
+#' 
 #' 
 #' @export
 
 create_rescaled_uptake_dataset <- function(dat, 
                                            ret_params,
+                                           state = dat[["State"]][1],
                                            time_0 = min(dat[["Exposure"]]),
                                            time_100 = max(dat[["Exposure"]]),
                                            deut_part = 0.9,
                                            for_download = FALSE){
   
   peptide_list <- unique(select(dat, Sequence, Start, End))
+  
+  dat <- filter(dat, State == state)
+  
+  print(paste0("Creating rescaled dataset for ...", state))
   
   res <- lapply(1:nrow(peptide_list), function(i){
     

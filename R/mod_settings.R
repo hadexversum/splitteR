@@ -17,9 +17,12 @@ mod_settings_ui <- function(id) {
                  choices = c("state_1", "state_2"),
                  selected = "state_1"
                  ),
-    div({
-      span("Peptide bonds convention is used!", style="color:red")
-    })),
+    div(
+    span("Peptide bonds convention is used!", style="color:red"),
+    numericInput(inputId = ns("hamuro_threshold"),
+                 label = "Hamuro retention threshold:",
+                 value = 0.3))
+    ),
     splitLayout(
     selectInput(inputId = ns("time_0"),
                 label = "Select no deut timepoint",
@@ -74,7 +77,8 @@ mod_settings_server <- function(id, dat){
       time_0 = as.numeric(input[["time_0"]]),
       time_100 = as.numeric(input[["time_100"]]),
       deut_part = as.numeric(input[["deut_part"]]),
-      if_rescaled = input[["if_rescaled"]]
+      if_rescaled = input[["if_rescaled"]],
+      hamuro_threshold = as.numeric(input[["hamuro_threshold"]])
     )
   )  
     

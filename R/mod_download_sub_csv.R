@@ -41,6 +41,9 @@ mod_download_sub_csv_server <- function(id, dat, settings){
             checkboxInput(inputId = ns("use_subfragments"),
                           label = "Export subfragments",
                           value = TRUE),
+            checkboxInput(inputId = ns("use_rescaled"),
+                          label = "Export rescaled values",
+                          value = TRUE),
             br(),
             downloadButton(outputId = ns("download_button"),
                            label = "Create file"),
@@ -65,11 +68,33 @@ mod_download_sub_csv_server <- function(id, dat, settings){
     
    current_dat <- reactive({
      
-     if(input[["change_sequences"]]){
+     dat_1 <- if(input[["change_sequences"]]){
        replace_sequences(dat())
      } else dat()
      
+     dat_2 <- if(input[["use_rescaled"]]){
+       
+       lapply(input[["download_states"]], function(state){
+         
+         # browser()
+         
+         ret_params <- create_retention_dataset(dat_1, state = state)
+         create_rescaled_uptake_dataset(dat_1, ret_params, state)
+         
+       }) %>% bind_rows()
+       
+        
+     } else {
+       dat_1
+     }
+     
+     dat_2
+     
    })
+   
+   ##
+   
+   
    
   subs_dat <- reactive({
      

@@ -55,12 +55,11 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
       validate(need(!is.null(input[["subsections_list_rows_selected"]]), ""))
       i = input[["subsections_list_rows_selected"]]
       
-      # browser()
-      
-      
       if(subsections()[input[["subsections_list_rows_selected"]], "common"] == "origin"){
         
         ## origin peptide
+        
+        # browser()
         
         pep_dat <- dat() %>%
           filter(Sequence == subsections()[input[["subsections_list_rows_selected"]], "sub_sequence"],
