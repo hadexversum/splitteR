@@ -65,13 +65,7 @@ mod_input_data_server <- function(id){
     
     # data_source <- reactive({ attr(dat_raw(), "source") })
     
-    dat <- reactive({
-      
-      splitteR::replace_sequences(dat = dat_raw())
-      
-      # HRaDeX::omit_amino(dat = dat_raw(), omit = input[["omit"]])
-             
-    })
+    
     
     ### other outputs
     
@@ -98,7 +92,7 @@ mod_input_data_server <- function(id){
     ### return values
     
     return(
-      dat
+      dat_raw
     )
         
         

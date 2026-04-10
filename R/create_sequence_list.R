@@ -16,13 +16,15 @@
 #' 
 #' @export
 
-create_sequence_list <- function(dat){
+create_sequence_list <- function(dat,
+                                 threshold = 0.3){
   
   peptide_list <- dat %>%
     select(Sequence, Start, End) %>%
     unique(.) %>%
     rowwise() %>%
-    mutate(seq_bond = get_sequence_bonds(sequence = Sequence),
+    mutate(seq_bond = get_sequence_bonds(sequence = Sequence,
+                                         threshold = threshold),
            n_bonds = stringr::str_count(seq_bond, "[A-Z]"))
   
   return(peptide_list)
@@ -43,9 +45,11 @@ create_sequence_list <- function(dat){
 #' 
 #' @export
 
-replace_sequences <- function(dat){
+replace_sequences <- function(dat,
+                              threshold = 0.3){
   
-  new_peptide_list <- create_sequence_list(dat)
+  new_peptide_list <- create_sequence_list(dat,
+                                           threshold = threshold)
   
   fin <- merge(dat, new_peptide_list, by = c("Sequence", "Start", "End")) %>%
     select(-Sequence, -MaxUptake) %>%

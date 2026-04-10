@@ -6,7 +6,14 @@
 #' @noRd
 app_server <- function(input, output, session) {
 
-  dat <- mod_input_data_server("input_data")
+  dat_raw <- mod_input_data_server("input_data")
+  
+  dat <- reactive({
+    
+    splitteR::replace_sequences(dat = dat_raw(),
+                                threshold = settings()[["hamuro_threshold"]])
+    
+  })
   
   settings <- mod_settings_server("split_settings", dat = dat)
   

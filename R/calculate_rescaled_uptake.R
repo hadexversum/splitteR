@@ -68,7 +68,7 @@ create_rescaled_uptake_dataset <- function(dat,
   
   dat <- filter(dat, State == state)
   
-  print(paste0("Creating rescaled dataset for ...", state))
+  print(paste0("Creating rescaled dataset for ... ", state))
   
   res <- lapply(1:nrow(peptide_list), function(i){
     

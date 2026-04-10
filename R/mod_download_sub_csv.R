@@ -44,6 +44,26 @@ mod_download_sub_csv_server <- function(id, dat, settings){
             checkboxInput(inputId = ns("use_rescaled"),
                           label = "Export rescaled values",
                           value = TRUE),
+           # splitLayout(
+             splitLayout(
+               selectInput(inputId = ns("time_0"),
+                           label = "Select no deut timepoint",
+                           choices = unique(dat()[["Exposure"]]),
+                           selected = min(unique(dat()[["Exposure"]]))), 
+               selectInput(inputId = ns("time_100"),
+                           label = "Select FD timepoint",
+                           choices = unique(dat()[["Exposure"]]),
+                           selected = max(unique(dat()[["Exposure"]])))
+             ),
+             splitLayout(
+               numericInput(inputId = ns("deut_part"),
+                            label = "Deuterium concentration:",
+                            value = 0.9),
+               numericInput(inputId = ns("hamuro_threshold"),
+                            label = "Hamuro retention threshold:",
+                            value = 0.3)
+             ),
+           # ),
             br(),
             downloadButton(outputId = ns("download_button"),
                            label = "Create file"),
@@ -56,30 +76,41 @@ mod_download_sub_csv_server <- function(id, dat, settings){
                          icon = icon("th"),
                          onclick ="window.open('https://hradex.mslab-ibb.pl/')"),
             
-            p("Creating a downloadable file may take a while!"),
-            p("At this moment, the download only works for unscaled data. This will change soon.")
+            p("Creating a downloadable file may take a while!")
             
           )
         )
       )
     }) %>% bindEvent(input[["get_downloads"]])
     
+
+    
    ## data after sequence transformation
     
    current_dat <- reactive({
      
+     # browser()
+     
      dat_1 <- if(input[["change_sequences"]]){
-       replace_sequences(dat())
+       replace_sequences(dat(),
+                         threshold = as.numeric(input[["hamuro_threshold"]]))
      } else dat()
      
      dat_2 <- if(input[["use_rescaled"]]){
        
        lapply(input[["download_states"]], function(state){
          
-         # browser()
-         
-         ret_params <- create_retention_dataset(dat_1, state = state)
-         create_rescaled_uptake_dataset(dat_1, ret_params, state)
+         ret_params <- create_retention_dataset(dat_1, 
+                                                state = state,
+                                                time_0 = as.numeric(input[["time_0"]]),
+                                                time_100 = as.numeric(input[["time_100"]]),
+                                                deut_part = as.numeric(input[["deut_part"]]))
+         create_rescaled_uptake_dataset(dat_1, 
+                                        ret_params = ret_params, 
+                                        state = state,
+                                        time_0 = as.numeric(input[["time_0"]]),
+                                        time_100 = as.numeric(input[["time_100"]]),
+                                        deut_part = as.numeric(input[["deut_part"]]))
          
        }) %>% bind_rows()
        
@@ -94,6 +125,7 @@ mod_download_sub_csv_server <- function(id, dat, settings){
    
    ##
    
+  
    
    
   subs_dat <- reactive({
@@ -105,7 +137,8 @@ mod_download_sub_csv_server <- function(id, dat, settings){
        state_dat <- filter(current_dat(), State == state)
        
        create_subsections_dataset(dat = state_dat, 
-                                  subsections = create_subsections(state_dat))
+                                  subsections = create_subsections(state_dat,
+                                                                   use_convention = input[["change_sequences"]]))
      }) %>% bind_rows()
      
    })
