@@ -26,10 +26,13 @@ mod_settings_ui <- function(id) {
     splitLayout(
     selectInput(inputId = ns("time_0"),
                 label = "Select no deut timepoint",
-                choices = c(0, 0.1)),
+                choices = c(0, 0.1),
+                selected = 0)
+    ,
     selectInput(inputId = ns("time_100"),
                 label = "Select FD timepoint",
-                choices = c(1000, 1400))
+                choices = c(1000, 1400),
+                selected = 1400)
     ),
     numericInput(inputId = ns("deut_part"),
                  label = "Deuterium concentration:",
@@ -50,26 +53,28 @@ mod_settings_server <- function(id, dat){
     
     states <- reactive(unique(dat()[["State"]]))
     
-    observe({
+    times <- reactive(unique(dat()[["Exposure"]]))
+    
+    observeEvent(dat(), {
       
       updateRadioButtons(session, inputId = "selected_state",
                          choices = states(),
                          selected = states()[1])
-    })
+    }, once = TRUE)
     
-    observe({
+    observeEvent(dat(), {
       
       updateSelectInput(session, inputId = "time_0", 
-                        choices = unique(dat()[["Exposure"]]),
-                        selected = min(unique(dat()[["Exposure"]])))
-    })
+                        choices = times(),
+                        selected = min(times()))
+    }, once = TRUE)
     
-    observe({
+    observeEvent(dat(), {
       
       updateSelectInput(session, inputId = "time_100", 
-                        choices = unique(dat()[["Exposure"]]),
-                        selected = max(unique(dat()[["Exposure"]])))
-    })
+                        choices = times(),
+                        selected = max(times()))
+    }, once = TRUE)
  
   params <- reactive(
     data.frame(
