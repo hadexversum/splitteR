@@ -47,34 +47,35 @@ mod_settings_ui <- function(id) {
 #' split_settings Server Functions
 #'
 #' @noRd 
-mod_settings_server <- function(id, dat){
+mod_settings_server <- function(id, dat, dat_raw){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
     
-    states <- reactive(unique(dat()[["State"]]))
+    
     
     times <- reactive(unique(dat()[["Exposure"]]))
     
-    observeEvent(dat(), {
+    observeEvent(dat_raw(), {
+      
+      states <- reactive(unique(dat()[["State"]]))
       
       updateRadioButtons(session, inputId = "selected_state",
-                         choices = states(),
-                         selected = states()[1])
-    }, once = TRUE)
+                         choices = states())
+    })
     
-    observeEvent(dat(), {
+    observeEvent(dat_raw(), {
       
       updateSelectInput(session, inputId = "time_0", 
                         choices = times(),
                         selected = min(times()))
-    }, once = TRUE)
+    })
     
-    observeEvent(dat(), {
+    observeEvent(dat_raw(), {
       
       updateSelectInput(session, inputId = "time_100", 
                         choices = times(),
                         selected = max(times()))
-    }, once = TRUE)
+    })
  
   params <- reactive(
     data.frame(
