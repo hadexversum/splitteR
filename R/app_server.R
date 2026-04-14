@@ -15,7 +15,7 @@ app_server <- function(input, output, session) {
     
   })
   
-  settings <- mod_settings_server("split_settings", dat = dat, dat_raw = dat_raw)
+  settings <- mod_settings_server("split_settings", dat = dat_raw)
   
   subsections <- reactive({ create_subsections(dat(),
                                                use_convention = TRUE) })

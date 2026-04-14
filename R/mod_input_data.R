@@ -85,16 +85,13 @@ mod_input_data_server <- function(id){
       
       if (is.null(input[["data_file"]]))
             "Example file: eEF1B_alpha.csv."
-      else "Other data!"
+      else "Other data then exemplary."
     })
     
   
     ### return values
     
-    return(
-      dat_raw
-    )
-        
+    return(dat_raw)    
         
     #     list(input_info = reactive({
     #       data_file <- input[["data_file"]]

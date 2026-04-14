@@ -47,7 +47,7 @@ mod_settings_ui <- function(id) {
 #' split_settings Server Functions
 #'
 #' @noRd 
-mod_settings_server <- function(id, dat, dat_raw){
+mod_settings_server <- function(id, dat){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
     
@@ -55,7 +55,7 @@ mod_settings_server <- function(id, dat, dat_raw){
     
     times <- reactive(unique(dat()[["Exposure"]]))
     
-    observeEvent(dat_raw(), {
+    observeEvent(dat(), {
       
       states <- reactive(unique(dat()[["State"]]))
       
@@ -63,14 +63,14 @@ mod_settings_server <- function(id, dat, dat_raw){
                          choices = states())
     })
     
-    observeEvent(dat_raw(), {
+    observeEvent(dat(), {
       
       updateSelectInput(session, inputId = "time_0", 
                         choices = times(),
                         selected = min(times()))
     })
     
-    observeEvent(dat_raw(), {
+    observeEvent(dat(), {
       
       updateSelectInput(session, inputId = "time_100", 
                         choices = times(),
