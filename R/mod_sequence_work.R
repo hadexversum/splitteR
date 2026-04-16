@@ -25,9 +25,10 @@ mod_sequence_work_server <- function(id, dat, settings){
       
       dat() %>%
         select(Sequence, Start, End) %>%
-        unique() %>%
-        dplyr::rowwise() %>%
-        mutate(seq_uptake = splitteR::get_sequence_bonds(sequence = Sequence))
+        unique() 
+      # %>%
+      #   dplyr::rowwise() %>%
+      #   mutate(seq_uptake = splitteR::get_sequence_bonds(sequence = Sequence))
     })
     
     output[["seq_data"]] <- renderDT({

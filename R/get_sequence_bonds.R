@@ -26,21 +26,23 @@ get_sequence_bonds <- function(sequence,
                                threshold = 0.3){
   
   residues <- strsplit(sequence, "")[[1]]
-  h_ret_first_2 <- coalesce(rate_n[residues[1], residues[2]], 0)
   
   res <- lapply(1:length(residues), function(i){
     
+    
     if(i == 1) {
       tolower(residues[i])
-    }
-    else if(i == 2) {
-      if(h_ret_first_2 < threshold)
-        tolower(residues[i])
-      else residues[i]
+    } else if(i == 2) {
+        if(coalesce(rate_n[residues[1], residues[2]], 0) < threshold) tolower(residues[i])
+          else residues[i]
     } else if(residues[i] == "P"){
       tolower(residues[i])
+    } else if(i == length(residues)){
+        if(coalesce(rate_c[residues[i], residues[i-1]], 0) < threshold) tolower(residues[i])
+          else residues[i]
     } else {
-      residues[i]
+        if(coalesce(rate_m[residues[i-1], residues[i]], 0) < threshold) tolower(residues[i]) 
+          else residues[i]
     }
   }) %>% 
     unlist() %>%
