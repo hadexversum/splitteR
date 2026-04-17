@@ -15,7 +15,8 @@
 plot_uc_with_origin <- function(dat,
                                 subsection_dat,
                                 subsection,
-                                state = dat[["State"]][1]){
+                                state = dat[["State"]][1],
+                                deut_part = 0.9){
   
   assert(subsection[["common"]]!="origin")
   
@@ -32,7 +33,10 @@ plot_uc_with_origin <- function(dat,
                                                 states = state)
   
   sub_kin_dat <- calculate_peptide_kinetics(subsection_dat)
+  sub_max_uptake <- stringr::str_count(unique(sub_kin_dat[["Sequence"]]), "[A-Z]")
   
+  common <- subsection[["common"]]
+                                       
   low_y <- min(min(sub_kin_dat[["deut_frac"]]), 0)
     
     ggplot() +
@@ -57,12 +61,13 @@ plot_uc_with_origin <- function(dat,
       scale_x_log10() + 
       ylim(c(low_y-1, NA)) +
       geom_hline(yintercept = 0, linetype = "dotted", size = 0.25) +
+      geom_hline(yintercept = sub_max_uptake*deut_part, linetype = "dotted", size = 0.25) +
       theme(legend.position = "bottom") +
       labs(title = paste0("Deuterium uptake for subsection ", sub_kin_dat[["Sequence"]][1], " and the original peptides"),
            x = "Exposure [log(min)]",
-           y = "Deuterium uptake [Da]")
-    
-  
+           y = "Deuterium uptake [Da]") 
+
+      
  
 
 }

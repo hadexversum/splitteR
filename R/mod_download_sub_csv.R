@@ -30,21 +30,18 @@ mod_download_sub_csv_server <- function(id, dat, settings){
         modalDialog(
           title = "Export data for HaDeX2/HRaDeX",
           p("The data is not transfered automatically, please do it manually."),
+          p("The exchangeable proton convention is used."),
           wellPanel(
             checkboxGroupInput(inputId = ns("download_states"),
                                label = "Select states to import:",
                                choices = states(),
                                selected = states()),
-            checkboxInput(inputId = ns("change_sequences"),
-                          label = "Use sequence convention",
-                          value = TRUE),
             checkboxInput(inputId = ns("use_subfragments"),
                           label = "Export subfragments",
                           value = TRUE),
             checkboxInput(inputId = ns("use_rescaled"),
                           label = "Export rescaled values",
                           value = TRUE),
-           # splitLayout(
              splitLayout(
                selectInput(inputId = ns("time_0"),
                            label = "Select no deut timepoint",
@@ -63,7 +60,6 @@ mod_download_sub_csv_server <- function(id, dat, settings){
                             label = "Hamuro retention threshold:",
                             value = 0.3)
              ),
-           # ),
             br(),
             downloadButton(outputId = ns("download_button"),
                            label = "Create file"),
@@ -84,17 +80,15 @@ mod_download_sub_csv_server <- function(id, dat, settings){
     }) %>% bindEvent(input[["get_downloads"]])
     
 
-    
+      
+  
    ## data after sequence transformation
     
    current_dat <- reactive({
      
-     # browser()
-     
-     dat_1 <- if(input[["change_sequences"]]){
-       replace_sequences(dat(),
-                         threshold = as.numeric(input[["hamuro_threshold"]]))
-     } else dat()
+     dat_1 <- replace_sequences(dat(),
+                                threshold = as.numeric(input[["hamuro_threshold"]]))
+
      
      dat_2 <- if(input[["use_rescaled"]]){
        
@@ -129,7 +123,7 @@ mod_download_sub_csv_server <- function(id, dat, settings){
    
    
   subs_dat <- reactive({
-     
+    
      lapply(input[["download_states"]], function(state){
        
        print(paste0("Creating data for ", state))
@@ -138,7 +132,7 @@ mod_download_sub_csv_server <- function(id, dat, settings){
        
        create_subsections_dataset(dat = state_dat, 
                                   subsections = create_subsections(state_dat,
-                                                                   use_convention = input[["change_sequences"]]))
+                                                                   use_convention = TRUE))
      }) %>% bind_rows()
      
    })

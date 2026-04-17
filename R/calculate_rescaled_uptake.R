@@ -1,4 +1,8 @@
-
+#' @examples
+#' pep_dat <- filter(alpha_dat, Sequence == "LKSPAG", Start == 5, End == 10, State == "Alpha_KSCN")
+#' ret_scale <- create_retention_dataset(alpha_dat, state = "Alpha_KSCN", time_0 = min(alpha_dat[["Exposure"]]), 
+#'                                       time_100 = max(alpha_dat[["Exposure"]]), deut_part = 0.9) %>%
+#'                                       filter(Sequence == "LKSPAG", Start == 5, End == 10) %>% .[["ret_scale"]]
 #' @export 
 calculate_rescaled_uptake <- function(pep_dat, 
                                       ret_scale,
@@ -68,7 +72,7 @@ create_rescaled_uptake_dataset <- function(dat,
   
   dat <- filter(dat, State == state)
   
-  print(paste0("Creating rescaled dataset for ... ", state))
+  print(paste0("Creating rescaled dataset for... ", state))
   
   res <- lapply(1:nrow(peptide_list), function(i){
     

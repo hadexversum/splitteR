@@ -68,7 +68,7 @@ app_server <- function(input, output, session) {
   
   
   mod_download_sub_csv_server("subfragments", 
-                              dat = dat,
+                              dat = dat_raw,
                               settings = settings)
   
   mod_table_plot_uc_server("uptake_curves", dat = dat, 

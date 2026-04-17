@@ -46,7 +46,7 @@ create_subsections_dataset <- function(dat,
         origin_dat <- filter(mass_dat, Start == sub_start, End == sub_end, Exposure == time) %>%
           rename(Center = avg_exp_mass) %>%
           mutate(Fragment = "",
-                 MaxUptake = nchar(sub_sequence),
+                 MaxUptake = stringr::str_count(sub_sequence, "[A-Z]"),
                  z = 1,
                  RT = 1,
                  Inten = 1)
@@ -62,7 +62,7 @@ create_subsections_dataset <- function(dat,
         merge(longer_dat_mass, shorter_dat_mass, by = c("Protein", "Modification", "State", "Exposure", "File")) %>%
           select( -MaxUptake.x, -MaxUptake.y, - Sequence.x, -Sequence.y, -MHP.x, -MHP.y, -id.x, -id.y) %>%
           mutate(mass = avg_exp_mass.x - avg_exp_mass.y) %>%
-          mutate(MaxUptake = nchar(sub_sequence), 
+          mutate(MaxUptake = stringr::str_count(sub_sequence, "[A-Z]"),
                  MHP = 1,
                  Start = sub_start, 
                  End = sub_end,
@@ -120,7 +120,7 @@ get_subsection_data <- function(dat,
   merge(longer_dat_mass, shorter_dat_mass, by = c("Protein", "Modification", "State", "Exposure", "File")) %>%
     select( -MaxUptake.x, -MaxUptake.y, - Sequence.x, -Sequence.y, -MHP.x, -MHP.y) %>%
     mutate(Center = avg_exp_mass.x - avg_exp_mass.y) %>%
-    mutate(MaxUptake = nchar(subsection[, "sub_sequence"]), 
+    mutate(MaxUptake = stringr::str_count(subsection[, "sub_sequence"], "[A-Z]"),
            MHP = 1,
            Start = subsection[, "sub_start"], 
            End = subsection[, "sub_end"],
