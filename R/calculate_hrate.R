@@ -58,21 +58,20 @@ get_peptide_hrates <- function(sequence,
   residues <- strsplit(sequence, split = "")[[1]]
   
   v_hrates <- lapply(1:n_res, function(i){
-
-   x <- if(i == 1){ 
-      0 
-   } else if(residues[i] == "P") {
-     0
-    } else if(i == 2){ 
-        rate_n[residues[i-1], residues[i]] 
-    } else if(i == n_res){
-        rate_c[residues[i-1], residues[i]]
-      } else {  rate_m[residues[i-1], residues[i]] }
-   
-    # print(paste0(i, " ", residues[i]))
-    # print(x)
     
-   x
+    if(i == 1){ 
+      NA 
+    } else if(is.na(residues[i])){ 
+      NA
+    } else if(residues[i] == "P") {
+      NA
+    } else if(i == 2){ 
+      rate_n[residues[i-1], residues[i]] 
+    } else if(i == n_res){
+      rate_c[residues[i-1], residues[i]]
+    } else if(is.na(residues[i-1])){
+      NA
+    } else {  rate_m[residues[i-1], residues[i]] }
    
   }) %>% unlist(.)
  
@@ -82,37 +81,98 @@ get_peptide_hrates <- function(sequence,
    
 }
 
+#' @examples
+#' plot_hrates_heatmap(filter(alpha_dat, End < 100))
+#' 
+#' 
 #' @export
-plot_hrates_heatmap <- function(dat){
+plot_hrates_heatmap <- function(dat,
+                                hamuro_threshold = 0.3){
   
   pep_dat <- dat %>%
-    select(Sequence, Start, End) %>% unique(.) %>% mutate(id = 1:nrow(.)) %>%
-    filter(End < 100)
+    select(Sequence, Start, End) %>% unique(.) %>% mutate(id = 1:nrow(.)) 
   
   plot_dat <- lapply(1:nrow(pep_dat), function(i){
     
+    # print(pep_dat[[i, "Sequence"]])
     get_peptide_hrates(sequence = pep_dat[[i, "Sequence"]],
                        start = pep_dat[[i, "Start"]],
                        end = pep_dat[[i, "End"]]) %>%
       mutate(id = pep_dat[[i, "id"]])
     
   }) %>% bind_rows()
+ 
+  seq_length <- max(plot_dat[["pos"]])
+  new_length <- ceiling(seq_length / 50) * 50
   
-  ggplot(plot_dat) +
-    geom_rect(aes(xmin = pos, xmax = pos+1,
+  max_id <- max(plot_dat[["id"]])
+  
+  
+  plot_dat$range <- cut(
+    plot_dat$pos,
+    breaks = seq(0, new_length, by = 50),
+    right = FALSE,
+    include.lowest = TRUE
+  )
+  
+  ##
+  ## to fix the length of last panel
+  
+  null_positions <- new_length - seq_length
+  
+  sequence <- plot_dat %>%
+    select(pos, res) %>%
+    unique() %>%
+    bind_rows(data.frame(pos = (seq_length+1):new_length,
+                         res = rep("", null_positions))) %>%
+    .[["res"]]
+  
+  mocked_dat <- data.frame(
+    res = rep("", null_positions),
+    h_rate = rep(NA_real_, null_positions),
+    pos = (seq_length+1):new_length,
+    id = rep(max_id+1, null_positions)
+  )
+  
+  mocked_dat$range <- cut(
+    mocked_dat$pos,
+    breaks = seq(0, new_length, by = 50),
+    right = FALSE,
+    include.lowest = TRUE
+  )
+  
+  ##
+  
+  plt <- ggplot(plot_dat) +
+    geom_rect(aes(xmin = pos - 0.5, xmax = pos + 0.5,
                   ymin = id, ymax = id+1,
                   fill = h_rate)) +
-    geom_text(aes(x = pos + 0.5, y = 0, label = res)) +
+    geom_rect(data = mocked_dat, aes(xmin = pos - 0.5, xmax = pos + 0.5,
+                                     ymin = max_id - 1, ymax = max_id - 1), fill = "grey98") +
+    theme_minimal() +
     theme(legend.position = "bottom",
           axis.ticks.y = element_blank(),
-          axis.text.y = element_blank()) +
+          axis.text.y = element_blank(),
+          panel.grid.major.y = element_blank(),
+          panel.grid.minor.y = element_blank(),
+          panel.background = element_rect(fill = "grey98", color = NA),
+          strip.text = element_blank(),
+          axis.text = element_text(size = 14)) +
     labs(y = "",
          x = "Protein sequence") +
-    scale_fill_gradient2(low = "deeppink1", mid = "white", high = "deepskyblue", midpoint = 0.3) 
+    scale_fill_gradient2(low = "deeppink1", mid = "white", high = "deepskyblue", midpoint = hamuro_threshold,
+                         na.value = "grey90") +
+    scale_x_continuous(breaks = 1:new_length, labels = sequence) +
+    facet_wrap(~ range, ncol = 1, scales = "free", drop = FALSE) 
   
-  
+  return(plt)
 }
 
+#' @description
+#' not used.
+#' 
+#' 
+#' @export
 plot_sequence_hrates_heatmap <- function(dat){
   
   ## to slow
@@ -123,11 +183,11 @@ plot_sequence_hrates_heatmap <- function(dat){
     # print(paste0(i, residues[i, "aa"]))
     
     if(i == 1){ 
-      0 
+      NA 
     } else if(is.na(residues[i, "aa"])){ 
       NA
       } else if(residues[i, "aa"] == "P") {
-      0
+      NA
     } else if(i == 2){ 
       rate_n[residues[i-1, "aa"], residues[i, "aa"]] 
     } else if(i == n_res){

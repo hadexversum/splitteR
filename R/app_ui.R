@@ -40,7 +40,9 @@ app_ui <- function(request) {
                         mod_rescale_ui("rescale")
               ),
               tabPanel("Sequences",
-                       mod_sequence_work_ui("sequences"))
+                       mod_sequence_work_ui("sequences")),
+              tabPanel("Retention",
+                       mod_retention_plot_ui("retention"))
             )
           )
       )

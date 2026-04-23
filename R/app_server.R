@@ -33,7 +33,7 @@ app_server <- function(input, output, session) {
   #   # settings()[["time_100"]]
   #   # settings()[["deut_part"]]
   #   # settings()[["if_rescaled"]]
-  # 
+  #   # settings()[["hamuro_threshold"]]
   # })
   # 
 
@@ -83,5 +83,9 @@ app_server <- function(input, output, session) {
   mod_sequence_work_server("sequences",
                            dat = dat,
                            settings = settings)
+  
+  mod_retention_plot_server("retention",
+                            dat = dat_raw,
+                            settings = settings)
 
 }
