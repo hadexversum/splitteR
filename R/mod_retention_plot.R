@@ -11,7 +11,7 @@ mod_retention_plot_ui <- function(id) {
   ns <- NS(id)
   tagList(
     plotOutput(outputId = ns("hamuro_heatmap"),
-               height = "900px")
+               height = "1000px")
   )
 }
     

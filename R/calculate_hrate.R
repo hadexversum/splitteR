@@ -81,12 +81,89 @@ get_peptide_hrates <- function(sequence,
    
 }
 
+#' @importFrom patchwork wrap_plots
+#' 
 #' @examples
 #' plot_hrates_heatmap(filter(alpha_dat, End < 100))
 #' 
 #' 
 #' @export
 plot_hrates_heatmap <- function(dat,
+                                hamuro_threshold = 0.3,
+                                panel_length = 50){
+  
+  
+  
+  pep_dat <- dat %>%
+    select(Sequence, Start, End) %>% unique(.) %>% mutate(id = 1:nrow(.)) 
+  
+  plot_dat <- lapply(1:nrow(pep_dat), function(i){
+    
+    get_peptide_hrates(sequence = pep_dat[[i, "Sequence"]],
+                       start = pep_dat[[i, "Start"]],
+                       end = pep_dat[[i, "End"]]) %>%
+      mutate(id = pep_dat[[i, "id"]])
+    
+  }) %>% bind_rows()
+  
+  n_panels = ceiling(max(plot_dat[["pos"]])/panel_length)
+  
+  plts <- lapply(1:n_panels, function(i){
+    
+    panel_start <- (i-1)*panel_length
+    panel_end <- i*panel_length
+    
+    tmp_plot_dat <- filter(plot_dat, 
+                           pos >= panel_start, 
+                           pos <= panel_end)
+    
+    min_id = min(tmp_plot_dat[["id"]])
+    max_id = max(tmp_plot_dat[["id"]])
+    
+    plt <- ggplot(tmp_plot_dat) +
+      geom_rect(aes(xmin = pos - 0.5, xmax = pos + 0.5,
+                    ymin = id, ymax = id+1,
+                    fill = h_rate)) +
+      geom_text(aes(x = pos, y = min_id - 2.5, label = res)) +
+      geom_text(aes(x = pos, y = max_id + 3 , label = res)) +
+      theme_minimal() +
+      ylim(c(min_id - 3, max_id + 3)) +
+      xlim(c(panel_start - 1, panel_end + 1)) + 
+      theme(legend.position = "none",
+            axis.ticks.y = element_blank(),
+            axis.text.y = element_blank(),
+            panel.grid.major.y = element_blank(),
+            panel.grid.minor.y = element_blank(),
+            text = element_text(size = 14),
+            panel.background = element_rect(fill = "grey98", color = NA)) +
+      labs(y = "",
+           x = "") +
+      scale_fill_gradient2(low = "deeppink1", mid = "pink", high = "deepskyblue1", midpoint = hamuro_threshold,
+                           na.value = "grey90") 
+    
+    if(i == n_panels){
+      plt <- plt + 
+        theme(legend.position = "bottom") +
+        labs(x = "Protein sequence",
+             fill = "Retention rate")
+    }
+    plt
+    
+  }) 
+  
+  wrap_plots(plts, ncol = 1)
+  
+}
+
+
+#' @examples
+#' plot_hrates_heatmap(filter(alpha_dat, End < 100))
+#' 
+#' @description
+#' first version 
+#' 
+#' @export
+plot_hrates_heatmap_v2 <- function(dat,
                                 hamuro_threshold = 0.3){
   
   pep_dat <- dat %>%
