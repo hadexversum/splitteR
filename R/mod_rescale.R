@@ -51,7 +51,7 @@ mod_rescale_server <- function(id, dat, settings){
         mutate(seq_length = nchar(Sequence))
       
       h_res["h_ret"] <- lapply(1:nrow(h_res), function(i){
-        splitteR::calculate_hrate(sequence = h_res[i, "Sequence"])
+        splitteR::calculate_hrate(sequence = toupper(h_res[i, "Sequence"]))
       }) %>% unlist(.)
       
       res <- merge(kin_dat_fd, h_res, by = c("Protein", "Sequence", "Start", "End", "Modification")) %>%
@@ -83,9 +83,10 @@ mod_rescale_server <- function(id, dat, settings){
                theo_ret = round(theo_ret, 4),
                ret_ratio = round(ret_ratio, 4),
                max_exp_ret = round(max_exp_ret, 4),
-               ret_scale = round(ret_scale, 4)) %>%
-        select(Protein, Sequence, State, Start, End, MaxUptake, deut_uptake, h_ret, ret_scale, back_exchange) #, avg_rt)
-      
+               ret_scale = round(ret_scale, 4),
+               FD = deut_uptake) %>%
+      select(Protein, Sequence, State, Start, End, MaxUptake, FD, h_ret, ret_scale, back_exchange) #, avg_rt)
+
         # select(ID, Protein, Sequence, State, Start, End, Modification, seq_length, MaxUptake, deut_uptake, h_ret, theo_ret, max_exp_ret, ret_scale, ret_ratio, back_exchange, err_back_exchange) #, avg_rt)
       
     },

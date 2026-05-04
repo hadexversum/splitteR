@@ -11,6 +11,10 @@ Imports:
     config,
     golem,
     HaDeX2,
+    ggplot2,
+    ggiraph,
+    glue,
+    patchwork,
     shiny,
     tools
 Suggests: 

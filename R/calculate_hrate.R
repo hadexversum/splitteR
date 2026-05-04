@@ -3,6 +3,7 @@
 #' 
 #' @examples
 #' calculate_hrate("GFGDLKSPAGL")
+#' calculate_hrate(toupper("gfGDLKSpAGL"))
 #' 
 #' @export
 calculate_hrate <- function(sequence){
