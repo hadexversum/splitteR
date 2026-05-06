@@ -4,7 +4,13 @@
 \alias{plot_uc_with_origin}
 \title{Plot uc of subfragment with parent peptides}
 \usage{
-plot_uc_with_origin(dat, subsection_dat, subsection, state = dat[["State"]][1])
+plot_uc_with_origin(
+  dat,
+  subsection_dat,
+  subsection,
+  state = dat[["State"]][1],
+  deut_part = 0.9
+)
 }
 \arguments{
 \item{dat}{original dat}

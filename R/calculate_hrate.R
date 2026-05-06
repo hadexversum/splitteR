@@ -11,25 +11,25 @@ calculate_hrate <- function(sequence){
   n_res <- nchar(sequence)
   residues <- strsplit(sequence, split = "")[[1]]
   
-  v_hrates <- lapply(1:n_res-1, function(i){
-    if(i == 1){
-      rate_n[residues[i], residues[i+1]]
-      
-    } else if(i == n_res-1) {
-      rate_c[residues[i], residues[i+1]]
-    } else {
-      # if(residues[i-1] == "P" |residues[i] == "P") {
-      #   0
-      # }
-      # else {
-      #   
-      # }
-      rate_m[residues[i], residues[i+1]]
-      
-    }
+  v_hrates <- lapply(1:n_res, function(i){
+    
+       if(i == 1){ 
+      NA
+    } else if(is.na(residues[i])){ 
+      NA
+    } else if(residues[i] == "P") {
+      NA
+    } else if(i == 2){ 
+      rate_n[residues[i-1], residues[i]] 
+    } else if(i == n_res){
+      rate_c[residues[i-1], residues[i]]
+    } else if(is.na(residues[i-1])){
+      NA
+    } else {  rate_m[residues[i-1], residues[i]] }
+    
   }) %>% unlist(.)
   
-  return(sum(v_hrates))
+  return(sum(v_hrates, na.rm = TRUE))
   
 }
 

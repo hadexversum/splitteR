@@ -34,12 +34,22 @@ mod_settings_ui <- function(id) {
                 choices = c(1000, 1400),
                 selected = 1400)
     ),
-    numericInput(inputId = ns("deut_part"),
-                 label = "Deuterium concentration:",
-                 value = 0.9),
-
-    checkboxInput(inputId = ns("if_rescaled"),
-                  label = "Do you want to rescale the data?"),
+    splitLayout(
+      
+      numericInput(inputId = ns("deut_part"),
+                   label = "Deuterium concentration:",
+                   value = 0.9),
+      div(
+        selectInput(inputId = ns("rescalling_value"),
+                    label = "Select rescalling value:",
+                    choices = c("ret_scale", "ret_scale_2", "theo_ret"),
+                    selected = "ret_scale"),
+        p("This is a scalling value for UC in `Rescalling` tab."),
+        checkboxInput(inputId = ns("if_rescaled"),
+                      label = "Do you want to rescale the subfragment data?")
+      )
+      
+    ),
     br()
   )
 }
@@ -51,7 +61,11 @@ mod_settings_server <- function(id, dat){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
     
-    
+    # observe({
+    #   
+    #   toggle("rescalling_value", condition = input[["if_rescaled"]])
+    #   
+    # })
     
     times <- reactive(unique(dat()[["Exposure"]]))
     
@@ -84,6 +98,7 @@ mod_settings_server <- function(id, dat){
       time_100 = as.numeric(input[["time_100"]]),
       deut_part = as.numeric(input[["deut_part"]]),
       if_rescaled = input[["if_rescaled"]],
+      rescalling_value = input[["rescalling_value"]],
       hamuro_threshold = as.numeric(input[["hamuro_threshold"]])
     )
   )  

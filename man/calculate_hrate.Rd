@@ -13,5 +13,6 @@ on the Hamuro table
 }
 \examples{
 calculate_hrate("GFGDLKSPAGL")
+calculate_hrate(toupper("gfGDLKSpAGL"))
 
 }

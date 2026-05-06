@@ -8,6 +8,7 @@ app_ui <- function(request) {
   tagList(
     golem_add_external_resources(),
     apply_ui_settings(),
+    shinyjs::useShinyjs(),
     fluidPage(
       br(),
       sidebarLayout(
@@ -77,6 +78,7 @@ golem_add_external_resources <- function() {
   library(HaDeX2)
   library(bslib)
   library(DT)
+  library(shinyjs)
   
   tags$head(
     favicon(),
@@ -92,6 +94,7 @@ golem_add_external_resources <- function() {
 
 #' @noRd
 apply_ui_settings <- function(){
+  
   
   options(shiny.maxRequestSize = 10 * 1024^2) 
   

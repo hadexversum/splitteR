@@ -4,7 +4,7 @@
 \alias{create_subsections}
 \title{Create subsections from peptides}
 \usage{
-create_subsections(dat)
+create_subsections(dat, use_convention = FALSE)
 }
 \arguments{
 \item{dat}{peptides data}

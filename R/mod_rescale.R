@@ -15,11 +15,14 @@ mod_rescale_ui <- function(id) {
     p("h_ret = retention for peptide based on Hamuro table - value in Daltons"),
     p("deut_uptake = deuterium uptake for peptide: m(t = FD) - m(t_0) - value in Daltons"),
     # p("max_exp_ret = deut_uptake(t = FD)/(deut_part*MaxUptake)"), 
-    # p("theo_ret = h_ret/MaxUptake"),
+    p("theo_ret = MaxUptake/h_ret"),
     # p("ret_ratio = max_exp_ret/theo_ret"),
     # p("avg_rt = mean retention time for t = FD"),
     p("ret_scale = MaxUptake*deut_part/deut_uptake(t=FD)"), #  = 1/max_exp_ret
+    p("ret_scale_2 = h_ret/deut_uptake(t = FD)"),
     plotOutput(outputId = ns("uc_scaled")),
+    uiOutput(outputId = ns("uc_info")),
+    plotOutput(outputId = ns("rescale_values")),
     # p("Scaled uptake curve is the standard uptake curve times ret_scale parameter."),
     plotOutput(outputId = ns("res_scatter")),
     # plotOutput(outputId = ns("rt_vs_ratio")),
@@ -58,9 +61,10 @@ mod_rescale_server <- function(id, dat, settings){
         arrange(Start, End) %>%
         mutate(ID = 1:nrow(.),
                max_exp_ret = deut_uptake/(MaxUptake*settings()[["deut_part"]]),
-               theo_ret = h_ret/MaxUptake,
+               theo_ret = MaxUptake/h_ret,
                ret_ratio = max_exp_ret/theo_ret, 
-               ret_scale = 1/max_exp_ret)
+               ret_scale = 1/max_exp_ret,
+               ret_scale_2 = h_ret/deut_uptake)
       
       res
       
@@ -84,8 +88,9 @@ mod_rescale_server <- function(id, dat, settings){
                ret_ratio = round(ret_ratio, 4),
                max_exp_ret = round(max_exp_ret, 4),
                ret_scale = round(ret_scale, 4),
+               ret_scale_2 = round(ret_scale_2, 4),
                FD = deut_uptake) %>%
-      select(Protein, Sequence, State, Start, End, MaxUptake, FD, h_ret, ret_scale, back_exchange) #, avg_rt)
+      select(Protein, Sequence, State, Start, End, MaxUptake, FD, h_ret, ret_scale, ret_scale_2, theo_ret, back_exchange) #, avg_rt)
 
         # select(ID, Protein, Sequence, State, Start, End, Modification, seq_length, MaxUptake, deut_uptake, h_ret, theo_ret, max_exp_ret, ret_scale, ret_ratio, back_exchange, err_back_exchange) #, avg_rt)
       
@@ -93,6 +98,25 @@ mod_rescale_server <- function(id, dat, settings){
     selection = "single")
  
     ##
+    
+    output[["rescale_values"]] <- renderPlot({
+      
+      ggplot(res_dat(), aes(x = ID)) + 
+        geom_point(aes(y = ret_scale, color = "ret_scale")) +
+        geom_line(aes(y = ret_scale, color = "ret_scale")) + 
+        geom_point(aes(y = ret_scale_2, color = "ret_scale_2")) +
+        geom_line(aes(y = ret_scale_2, color = "ret_scale_2")) +
+        geom_point(aes(y = theo_ret, color = "theo_ret")) +
+        geom_line(aes(y = theo_ret, color = "theo_ret")) +
+        labs(x = "Peptide ID", 
+             y = "", 
+             title = "Comparison of possible rescalling values",
+             color = "") +
+        theme_bw(base_size = 18) +
+        theme(legend.position = "bottom") 
+      
+      
+    })
     
     # rt_dat <- reactive({
     #   
@@ -163,9 +187,8 @@ mod_rescale_server <- function(id, dat, settings){
                                           time_0 = settings()[["time_0"]], 
                                           time_100 = settings()[["time_100"]])
     
-    # ret_ratio <- res_dat()[input[["res_data_rows_selected"]], "ret_ratio"]
     
-    ret_scale <- res_dat()[input[["res_data_rows_selected"]], "ret_scale"]
+    ret_scale <- res_dat()[input[["res_data_rows_selected"]], settings()[["rescalling_value"]] ]
     
     splitteR::plot_uc_scaled(kin_dat = kin_dat, 
                    state = settings()[["state"]],
@@ -175,7 +198,15 @@ mod_rescale_server <- function(id, dat, settings){
     
   })
   
+  
+  output[["uc_info"]] <- renderUI({
+    
+    paste0("The UC above is scalled using ", settings()[["rescalling_value"]], " value.")
+    
+  })
   ##
+  
+  
   
   output[["standard_bex"]] <- renderPlot({
     
