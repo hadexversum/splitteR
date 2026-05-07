@@ -85,7 +85,16 @@ plot_subs_cov <- function(dat,
                                            fill = common), 
                              colour = "black", 
                              alpha = 0.8) 
-    chosen_rect_2 <- geom_rect()
+    chosen_rect_2 <- geom_rect(data = dat[is.na(id)], 
+                               mapping = aes(xmin = Start, 
+                                             xmax = End +1, 
+                                             ymin = ID, 
+                                             ymax = ID - 1,
+                                             fill = common),
+                               colour = "black", 
+                               alpha = 0.8
+      
+    )
   }
   
   coverage_plot <- ggplot(data = dat) +
