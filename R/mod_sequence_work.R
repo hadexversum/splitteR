@@ -10,7 +10,7 @@
 mod_sequence_work_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    DTOutput(outputId = ns("seq_data"))
+    DT::DTOutput(outputId = ns("seq_data"))
   )
 }
     
@@ -31,7 +31,7 @@ mod_sequence_work_server <- function(id, dat, settings){
       #   mutate(seq_uptake = splitteR::get_sequence_bonds(sequence = Sequence))
     })
     
-    output[["seq_data"]] <- renderDT({
+    output[["seq_data"]] <- DT::renderDT({
       
       seqs()
       

@@ -10,7 +10,7 @@
 mod_rescale_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    DTOutput(outputId = ns("res_data")),
+    DT::DTOutput(outputId = ns("res_data")),
     p("What do we see?"),
     p("h_ret = retention for peptide based on Hamuro table - value in Daltons"),
     p("deut_uptake = deuterium uptake for peptide: m(t = FD) - m(t_0) - value in Daltons"),
@@ -75,7 +75,7 @@ mod_rescale_server <- function(id, dat, settings){
     
     
     
-    output[["res_data"]] <- renderDT({
+    output[["res_data"]] <- DT::renderDT({
       
       # res_dat_rt() %>%
       res_dat() %>%
