@@ -8,7 +8,11 @@ Description: As typical DynamX data are showing the uptake values for
     level.
 License: MIT + file LICENSE
 Imports: 
+    bslib,
     config,
+    data.table,
+    dplyr,
+    DT,
     golem,
     HaDeX2,
     ggplot2,
@@ -16,6 +20,7 @@ Imports:
     glue,
     patchwork,
     shiny,
+    shinyjs,
     tools
 Suggests: 
     testthat (>= 3.0.0)
