@@ -6,7 +6,11 @@
 #' @noRd
 app_server <- function(input, output, session) {
 
-  dat_raw <- mod_input_data_server("input_data")
+  dat_two <- mod_input_data_server("input_data")
+  
+  dat_raw <- dat_two[[1]]
+  
+  dat_rt <- dat_two[[2]]
   
   dat <- reactive({
     
@@ -78,6 +82,7 @@ app_server <- function(input, output, session) {
   
   mod_rescale_server("rescale", 
                      dat = dat,
+                     dat_rt = dat_rt, 
                      settings = settings)
   
   mod_sequence_work_server("sequences",

@@ -34,7 +34,7 @@ mod_rescale_ui <- function(id) {
 #' back_exchange Server Functions
 #'
 #' @noRd 
-mod_rescale_server <- function(id, dat, settings){
+mod_rescale_server <- function(id, dat, settings, dat_rt){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
   
@@ -90,7 +90,7 @@ mod_rescale_server <- function(id, dat, settings){
                ret_scale = round(ret_scale, 4),
                ret_scale_2 = round(ret_scale_2, 4),
                FD = deut_uptake) %>%
-      select(Protein, Sequence, State, Start, End, MaxUptake, FD, h_ret, ret_scale, ret_scale_2, theo_ret, back_exchange) #, avg_rt)
+      select(Protein, Sequence, State, Start, End, MaxUptake, FD, h_ret, ret_scale, ret_scale_2, theo_ret, back_exchange) #, avg_rt) 
 
         # select(ID, Protein, Sequence, State, Start, End, Modification, seq_length, MaxUptake, deut_uptake, h_ret, theo_ret, max_exp_ret, ret_scale, ret_ratio, back_exchange, err_back_exchange) #, avg_rt)
       
@@ -118,28 +118,28 @@ mod_rescale_server <- function(id, dat, settings){
       
     })
     
-    # rt_dat <- reactive({
-    #   
-    #   dat[[3]]() %>%
-    #     mutate(Exposure = round(as.numeric(Exposure, 4))) %>%
-    #     filter(Exposure == input[["time_100"]],
-    #            State == input[["state"]]) %>%
-    #     group_by(Protein, Start, End, Sequence, MaxUptake, State) %>%
-    #     summarise(avg_rt = mean(RT)) %>%
-    #     ungroup()
-    #   
-    #  
-    #  })
-    # 
-    # ##
-    # 
-    # res_dat_rt <- reactive({
-    #   
-    #   merge(res_dat(), rt_dat(), by = c("Protein", "Start", "End", "Sequence", "MaxUptake", "State"), all.x = TRUE)
-    #   
-    #   })
-    # 
-    # ##
+    rt_dat <- reactive({
+
+      dat_rt() %>%
+        mutate(Exposure = round(as.numeric(Exposure, 4))) %>%
+        filter(Exposure == input[["time_100"]],
+               State == input[["state"]]) %>%
+        group_by(Protein, Start, End, Sequence, MaxUptake, State) %>%
+        summarise(avg_rt = mean(RT)) %>%
+        ungroup()
+
+
+     })
+
+    ##
+
+    res_dat_rt <- reactive({
+
+      merge(res_dat(), rt_dat(), by = c("Protein", "Start", "End", "Sequence", "MaxUptake", "State"), all.x = TRUE)
+
+      })
+
+    ##
     
     output[["res_scatter"]] <- renderPlot({
       

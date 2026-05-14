@@ -65,7 +65,19 @@ mod_input_data_server <- function(id){
     
     # data_source <- reactive({ attr(dat_raw(), "source") })
     
-    
+    dat_rt <- reactive({
+      data_file <- input[["data_file"]]
+      
+      if (is.null(data_file)) {
+        # example_data_alpha
+        read.csv(system.file(package = "splitteR", "app/data/alpha_uncut.csv"))
+      } else {
+        validate(need(try({
+          file <- read.csv(data_file[["datapath"]])
+        }), "File does not fullfill requirements. Check file requirements!"))
+        file
+      }
+    })
     
     ### other outputs
     
@@ -91,7 +103,7 @@ mod_input_data_server <- function(id){
   
     ### return values
     
-    return(dat_raw)    
+    return(list(dat_raw, dat_rt))    
         
     #     list(input_info = reactive({
     #       data_file <- input[["data_file"]]
