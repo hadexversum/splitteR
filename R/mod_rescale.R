@@ -25,6 +25,7 @@ mod_rescale_ui <- function(id) {
     plotOutput(outputId = ns("rescale_values")),
     # p("Scaled uptake curve is the standard uptake curve times ret_scale parameter."),
     plotOutput(outputId = ns("res_scatter")),
+    plotOutput(outputId = ns("res_scatter_2")),
     # plotOutput(outputId = ns("rt_vs_ratio")),
     plotOutput(outputId = ns("standard_bex"))
     
@@ -157,6 +158,21 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
       
     })
     
+    output[["res_scatter_2"]] <- renderPlot({
+      
+      # browser()
+      
+      ggplot(res_dat()) +
+        geom_segment(aes(x = Start, xend = End, y = ret_scale_2, color = seq_length), size = 2) + 
+        geom_hline(yintercept = 1, linewidth = 0.5, color = "red", linetype = "dashed", alpha = 0.3) + 
+        scale_colour_gradientn(colours = terrain.colors(10)) +
+        theme_bw(base_size = 18) +
+        theme(legend.position = "bottom") +
+        labs(x = "Peptide ID",
+             y = "ret_scale_2",
+             color = "Peptide length")
+      
+    })
   
   
   ##
@@ -216,8 +232,10 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
                                        states = settings()[["state"]],
                                        time_100 = settings()[["time_100"]])
     
-    HaDeX2::plot_coverage_heatmap(bex_dat, 
-                                  value = "back_exchange")
+    splitteR::plot_comparison_backexchange(bex_dat)
+    
+    # HaDeX2::plot_coverage_heatmap(bex_dat, 
+    #                               value = "back_exchange")
     
   })
   
