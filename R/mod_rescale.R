@@ -26,6 +26,9 @@ mod_rescale_ui <- function(id) {
     # p("Scaled uptake curve is the standard uptake curve times ret_scale parameter."),
     plotOutput(outputId = ns("res_scatter")),
     plotOutput(outputId = ns("res_scatter_2")),
+    plotOutput(outputId = ns("plot_FD")),
+    plotOutput(outputId = ns("plot_h_ret")),
+    plotOutput(outputId = ns("plot_FD_h_ret")),
     # plotOutput(outputId = ns("rt_vs_ratio")),
     plotOutput(outputId = ns("standard_bex"))
     
@@ -152,8 +155,8 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
         scale_colour_gradientn(colours = terrain.colors(10)) +
         theme_bw(base_size = 18) +
         theme(legend.position = "bottom") +
-        labs(x = "Peptide ID",
-             y = "ret_scale",
+        labs(x = "Protein sequence",
+             y = "Normalisation to Nmax",
              color = "Peptide length")
       
     })
@@ -168,12 +171,48 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
         scale_colour_gradientn(colours = terrain.colors(10)) +
         theme_bw(base_size = 18) +
         theme(legend.position = "bottom") +
-        labs(x = "Peptide ID",
-             y = "ret_scale_2",
+        labs(x = "Protein sequence",
+             y = "Normalisation to standard conditions",
              color = "Peptide length")
       
     })
   
+  output[["plot_FD"]] <- renderPlot({
+    
+    ggplot(res_dat()) +
+      geom_segment(aes(x = Start, xend = End, y = deut_uptake), size = 2) + 
+      # scale_colour_gradientn(colours = rainbow(10)) +
+      theme_bw(base_size = 18) +
+      theme(legend.position = "bottom") +
+      labs(x = "Protein sequence",
+           y = "FD [Da]",
+           color = "Peptide length")
+  })
+  
+  ##
+  output[["plot_h_ret"]] <- renderPlot({
+    
+    ggplot(res_dat()) +
+      geom_segment(aes(x = Start, xend = End, y = h_ret), size = 2) + 
+      theme_bw(base_size = 18) +
+      theme(legend.position = "bottom") +
+      labs(x = "Protein sequence",
+           y = "Hamuro retention [Da]",
+           color = "Peptide length")
+    
+  })
+  output[["plot_FD_h_ret"]] <- renderPlot({
+    
+    ggplot(res_dat()) +
+      geom_segment(aes(x = Start, xend = End, y = h_ret, color = "h_ret"), size = 2) + 
+      geom_segment(aes(x = Start, xend = End, y = deut_uptake, color = "FD"), size = 2) + 
+      theme_bw(base_size = 18) +
+      theme(legend.position = "bottom") +
+      labs(x = "Protein sequence",
+           y = "[Da]",
+           color = "Peptide length")
+    
+  })
   
   ##
     

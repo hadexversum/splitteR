@@ -36,7 +36,7 @@ app_ui <- function(request) {
               tabPanel("Uptake curves",
                         mod_table_plot_uc_ui("uptake_curves")
               ),
-              tabPanel("Rescalling",
+              tabPanel("Rescaling",
                         mod_rescale_ui("rescale")
               ),
               tabPanel("Sequences",
