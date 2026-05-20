@@ -94,7 +94,8 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
                ret_scale = round(ret_scale, 4),
                ret_scale_2 = round(ret_scale_2, 4),
                FD = deut_uptake) %>%
-      select(Protein, Sequence, State, Start, End, MaxUptake, FD, h_ret, ret_scale, ret_scale_2, theo_ret, back_exchange) #, avg_rt) 
+      select(Protein, Sequence, State, Start, End, MaxUptake, FD, h_ret, ret_scale, ret_scale_2, theo_ret, back_exchange) %>%
+        nicer_table(tbl_dat = ., filename = "rescaling_data", selection = "single")
 
         # select(ID, Protein, Sequence, State, Start, End, Modification, seq_length, MaxUptake, deut_uptake, h_ret, theo_ret, max_exp_ret, ret_scale, ret_ratio, back_exchange, err_back_exchange) #, avg_rt)
       

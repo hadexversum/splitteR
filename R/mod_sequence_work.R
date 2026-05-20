@@ -33,7 +33,8 @@ mod_sequence_work_server <- function(id, dat, settings){
     
     output[["seq_data"]] <- DT::renderDT({
       
-      seqs()
+      seqs() %>%
+        nicer_table(tbl_dat = ., filename = "sequence_convention")
       
     })
   })
