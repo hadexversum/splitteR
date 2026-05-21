@@ -52,6 +52,18 @@ calculate_rescaled_uptake <- function(pep_dat,
 
 
 
+#' @importFrom dplyr arrange
+#' 
+#' @param dat data to be rescaled
+#' @param ret_params frame with parameters
+#' @param scaling_value value used to rescale values
+#' @param state biological state
+#' @param time_0 time of undeuterated measurement
+#' @param time_100 time of FD measurement
+#' @param deut_part procentage of deuterium in buffer
+#' @param for_downlad indicator if the data shoul be in 
+#' form coherent with uploadable file
+#' 
 #' @examples
 #' ret_params <- create_retention_dataset(alpha_dat, state = "Alpha_KSCN")
 #' x <- create_rescaled_uptake_dataset(alpha_dat, ret_params, state = "Alpha_KSCN")
@@ -62,6 +74,7 @@ calculate_rescaled_uptake <- function(pep_dat,
 
 create_rescaled_uptake_dataset <- function(dat, 
                                            ret_params,
+                                           scaling_value = "ret_scale_2",
                                            state = dat[["State"]][1],
                                            time_0 = min(dat[["Exposure"]]),
                                            time_100 = max(dat[["Exposure"]]),
@@ -79,7 +92,7 @@ create_rescaled_uptake_dataset <- function(dat,
     ret_scale <- filter(ret_params,
                         Sequence == peptide_list[[i, "Sequence"]],
                         Start == peptide_list[[i, "Start"]],
-                        End == peptide_list[[i, "End"]]) %>% .[["ret_scale"]]
+                        End == peptide_list[[i, "End"]]) %>% .[[scaling_value]]
     
     pep_dat <- filter(dat, 
                       Sequence == peptide_list[[i, "Sequence"]],

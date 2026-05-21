@@ -40,11 +40,11 @@ mod_settings_ui <- function(id) {
                    label = "Deuterium concentration:",
                    value = 0.9),
       div(
-        selectInput(inputId = ns("rescalling_value"),
-                    label = "Select rescalling value:",
+        selectInput(inputId = ns("rescaling_value"),
+                    label = "Select rescaling value:",
                     choices = c("ret_scale", "ret_scale_2", "theo_ret"),
                     selected = "ret_scale"),
-        p("This is a scalling value for UC in `Rescalling` tab."),
+        p("This is a scalling value for UC in `Rescaling` tab."),
         checkboxInput(inputId = ns("if_rescaled"),
                       label = "Do you want to rescale the subfragment data?")
       )
@@ -98,7 +98,7 @@ mod_settings_server <- function(id, dat){
       time_100 = as.numeric(input[["time_100"]]),
       deut_part = as.numeric(input[["deut_part"]]),
       if_rescaled = input[["if_rescaled"]],
-      rescalling_value = input[["rescalling_value"]],
+      rescalling_value = input[["rescaling_value"]],
       hamuro_threshold = as.numeric(input[["hamuro_threshold"]])
     )
   )  

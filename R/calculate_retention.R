@@ -50,9 +50,10 @@ create_retention_dataset <- function(dat,
     arrange(Start, End) %>%
     mutate(ID = 1:nrow(.),
            max_exp_ret = deut_uptake/(MaxUptake*deut_part),
-           theo_ret = h_ret/MaxUptake,
-           ret_ratio = max_exp_ret/theo_ret, 
-           ret_scale = 1/max_exp_ret)
+           theo_ret = MaxUptake/h_ret,
+           ret_ratio = max_exp_ret/theo_ret,
+           ret_scale = 1/max_exp_ret,
+           ret_scale_2 = h_ret/deut_uptake)
   
   res
 }

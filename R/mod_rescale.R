@@ -44,33 +44,12 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
   
     
     res_dat <- reactive({
-      
-      kin_dat_fd <- HaDeX2::calculate_state_uptake(dat(),
-                                                   state = settings()[["state"]], 
-                                                   time_0 = settings()[["time_0"]], 
-                                                   time_t = settings()[["time_100"]],
-                                                   time_100 = settings()[["time_100"]]) %>%
-        select(Protein, Sequence, Start, End, MaxUptake, deut_uptake, Modification)
-      
-      h_res <- HaDeX2::calculate_back_exchange(dat = dat(),
-                                               states = settings()[["state"]],
-                                               time_100 = settings()[["time_100"]]) %>%
-        mutate(seq_length = nchar(Sequence))
-      
-      h_res["h_ret"] <- lapply(1:nrow(h_res), function(i){
-        splitteR::calculate_hrate(sequence = toupper(h_res[i, "Sequence"]))
-      }) %>% unlist(.)
-      
-      res <- merge(kin_dat_fd, h_res, by = c("Protein", "Sequence", "Start", "End", "Modification")) %>%
-        arrange(Start, End) %>%
-        mutate(ID = 1:nrow(.),
-               max_exp_ret = deut_uptake/(MaxUptake*settings()[["deut_part"]]),
-               theo_ret = MaxUptake/h_ret,
-               ret_ratio = max_exp_ret/theo_ret, 
-               ret_scale = 1/max_exp_ret,
-               ret_scale_2 = h_ret/deut_uptake)
-      
-      res
+
+      create_retention_dataset(dat = dat(),
+                               state = settings()[["state"]], 
+                               time_0 = settings()[["time_0"]], 
+                               time_100 = settings()[["time_100"]],
+                               deut_part = as.numeric(settings()[["deut_part"]]))
       
     })
     
@@ -244,7 +223,7 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
                                           time_100 = settings()[["time_100"]])
     
     
-    ret_scale <- res_dat()[input[["res_data_rows_selected"]], settings()[["rescalling_value"]] ]
+    ret_scale <- res_dat()[input[["res_data_rows_selected"]], settings()[["rescaling_value"]] ]
     
     splitteR::plot_uc_scaled(kin_dat = kin_dat, 
                    state = settings()[["state"]],
@@ -257,7 +236,7 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
   
   output[["uc_info"]] <- renderUI({
     
-    paste0("The UC above is scalled using ", settings()[["rescalling_value"]], " value.")
+    paste0("The UC above is scalled using ", settings()[["rescaling_value"]], " value.")
     
   })
   ##

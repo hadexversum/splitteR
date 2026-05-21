@@ -51,6 +51,7 @@ mod_download_sub_csv_server <- function(id, dat, settings){
                            label = "Select FD timepoint",
                            choices = unique(dat()[["Exposure"]]),
                            selected = max(unique(dat()[["Exposure"]])))
+               
              ),
              splitLayout(
                numericInput(inputId = ns("deut_part"),
@@ -60,6 +61,10 @@ mod_download_sub_csv_server <- function(id, dat, settings){
                             label = "Hamuro retention threshold:",
                             value = 0.3)
              ),
+            selectInput(inputId = ns("rescaling_value"),
+                        label = "Select rescalling value:",
+                        choices = c("ret_scale", "ret_scale_2", "theo_ret"),
+                        selected = "ret_scale"),
             br(),
             downloadButton(outputId = ns("download_button"),
                            label = "Create file"),
@@ -102,6 +107,7 @@ mod_download_sub_csv_server <- function(id, dat, settings){
          create_rescaled_uptake_dataset(dat_1, 
                                         ret_params = ret_params, 
                                         state = state,
+                                        scaling_value = input[["rescaling_value"]],
                                         time_0 = as.numeric(input[["time_0"]]),
                                         time_100 = as.numeric(input[["time_100"]]),
                                         deut_part = as.numeric(input[["deut_part"]]))
