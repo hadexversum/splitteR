@@ -37,10 +37,13 @@ mod_download_sub_csv_server <- function(id, dat, settings){
                                choices = states(),
                                selected = states()),
             checkboxInput(inputId = ns("use_subfragments"),
-                          label = "Export subfragments",
+                          label = "Export subfragments?",
                           value = TRUE),
             checkboxInput(inputId = ns("use_rescaled"),
-                          label = "Export rescaled values",
+                          label = "Export rescaled values?",
+                          value = TRUE),
+            checkboxInput(inputId = ns("fix_negative"),
+                          label = "Change negative values to zero?",
                           value = TRUE),
              splitLayout(
                selectInput(inputId = ns("time_0"),
@@ -138,17 +141,32 @@ mod_download_sub_csv_server <- function(id, dat, settings){
        
        create_subsections_dataset(dat = state_dat, 
                                   subsections = create_subsections(state_dat,
-                                                                   use_convention = TRUE))
+                                                                   use_convention = TRUE)) %>%
+         dplyr::filter(MaxUptake!=0)
+       
      }) %>% bind_rows()
      
    })
+  
+  final_subs_dat <- reactive({
+    
+    # browser()
+    
+    if(input[["fix_negative"]]){
+      subs_dat() %>%
+        mutate(Center = if_else(Center<0, 0, Center))
+      
+    } else {
+      subs_dat()
+    }
+  })
   
   download_dat <- reactive({
     
     # browser()
     
     if(input[["use_subfragments"]]){
-      subs_dat()
+      final_subs_dat()
     } else {
       current_dat() %>%
         mutate(Fragment = "",

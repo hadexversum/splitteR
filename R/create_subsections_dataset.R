@@ -83,6 +83,16 @@ create_subsections_dataset <- function(dat,
   
 }
 
+#' @description
+#' This function changes negative Center values to zeros.
+#' 
+#' 
+#' @export
+filter_negative_values <- function(subsections_dat){
+
+  subsection_dat %>%
+    mutate(Center = if_else(Center<0, 0, Center))
+}
 
 #' calculate mass uptake for one subsection
 #' 
