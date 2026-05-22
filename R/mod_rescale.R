@@ -18,8 +18,8 @@ mod_rescale_ui <- function(id) {
     p("theo_ret = MaxUptake/h_ret"),
     # p("ret_ratio = max_exp_ret/theo_ret"),
     # p("avg_rt = mean retention time for t = FD"),
-    p("ret_scale = MaxUptake*deut_part/deut_uptake(t=FD)"), #  = 1/max_exp_ret
-    p("ret_scale_2 = h_ret/deut_uptake(t = FD)"),
+    p("Normalisation to Nmax: ret_scale = MaxUptake*deut_part/deut_uptake(t=FD)"), #  = 1/max_exp_ret
+    p("Normalisation to standard conditions: ret_scale_2 = h_ret/deut_uptake(t = FD)"),
     plotOutput(outputId = ns("uc_scaled")),
     uiOutput(outputId = ns("uc_info")),
     plotOutput(outputId = ns("rescale_values")),
