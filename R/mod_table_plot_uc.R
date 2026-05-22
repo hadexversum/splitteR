@@ -37,10 +37,13 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
     
     rescaled_dat <- reactive({
       
+      # browser()
+      
       dat() %>%
         filter(State == settings()[["state"]]) %>%
         create_rescaled_uptake_dataset(.,
                                        ret_params = ret_params(),
+                                       scaling_value = settings()[["rescaling_value"]], 
                                        time_0 = settings()[["time_0"]],
                                        time_100 = settings()[["time_100"]],
                                        deut_part = settings()[["deut_part"]],
@@ -72,7 +75,7 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
             filter(Sequence == subsections()[input[["subsections_list_rows_selected"]], "sub_sequence"],
                    Start == subsections()[input[["subsections_list_rows_selected"]], "sub_start"],
                    End == subsections()[input[["subsections_list_rows_selected"]], "sub_end"]) %>%
-            .[["ret_scale"]]
+            .[[settings()[["rescailing_value"]]]]
           
           pep_dat <- calculate_rescaled_uptake(pep_dat, 
                                                ret_scale = ret_scale,

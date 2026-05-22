@@ -98,7 +98,7 @@ mod_settings_server <- function(id, dat){
       time_100 = as.numeric(input[["time_100"]]),
       deut_part = as.numeric(input[["deut_part"]]),
       if_rescaled = input[["if_rescaled"]],
-      rescalling_value = input[["rescaling_value"]],
+      rescaling_value = input[["rescaling_value"]],
       hamuro_threshold = as.numeric(input[["hamuro_threshold"]])
     )
   )  

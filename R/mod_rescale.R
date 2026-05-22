@@ -94,7 +94,7 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
         geom_line(aes(y = theo_ret, color = "theo_ret")) +
         labs(x = "Peptide ID", 
              y = "", 
-             title = "Comparison of possible rescalling values",
+             title = "Comparison of possible rescaling values",
              color = "") +
         theme_bw(base_size = 18) +
         theme(legend.position = "bottom") 

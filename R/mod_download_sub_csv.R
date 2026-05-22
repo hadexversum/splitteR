@@ -45,29 +45,30 @@ mod_download_sub_csv_server <- function(id, dat, settings){
             checkboxInput(inputId = ns("fix_negative"),
                           label = "Change negative values to zero?",
                           value = TRUE),
-             splitLayout(
-               selectInput(inputId = ns("time_0"),
-                           label = "Select no deut timepoint",
-                           choices = unique(dat()[["Exposure"]]),
-                           selected = min(unique(dat()[["Exposure"]]))), 
-               selectInput(inputId = ns("time_100"),
-                           label = "Select FD timepoint",
-                           choices = unique(dat()[["Exposure"]]),
-                           selected = max(unique(dat()[["Exposure"]])))
-               
-             ),
-             splitLayout(
-               numericInput(inputId = ns("deut_part"),
-                            label = "Deuterium concentration:",
-                            value = 0.9),
-               numericInput(inputId = ns("hamuro_threshold"),
-                            label = "Hamuro retention threshold:",
-                            value = 0.3)
-             ),
-            selectInput(inputId = ns("rescaling_value"),
-                        label = "Select rescalling value:",
-                        choices = c("ret_scale", "ret_scale_2", "theo_ret"),
-                        selected = "ret_scale"),
+             # splitLayout(
+             #   selectInput(inputId = ns("time_0"),
+             #               label = "Select no deut timepoint",
+             #               choices = unique(dat()[["Exposure"]]),
+             #               selected = min(unique(dat()[["Exposure"]]))), 
+             #   selectInput(inputId = ns("time_100"),
+             #               label = "Select FD timepoint",
+             #               choices = unique(dat()[["Exposure"]]),
+             #               selected = max(unique(dat()[["Exposure"]])))
+             #   
+             # ),
+             # splitLayout(
+             #   numericInput(inputId = ns("deut_part"),
+             #                label = "Deuterium concentration:",
+             #                value = 0.9),
+             #   numericInput(inputId = ns("hamuro_threshold"),
+             #                label = "Hamuro retention threshold:",
+             #                value = 0.3)
+             # ),
+            # selectInput(inputId = ns("rescaling_value"),
+            #             label = "Select rescaling value:",
+            #             choices = c("ret_scale", "ret_scale_2", "theo_ret"),
+            #             selected = "ret_scale"),
+            p("Previously selected parameters in the main window are used to prepare the download."),
             br(),
             downloadButton(outputId = ns("download_button"),
                            label = "Create file"),
@@ -95,7 +96,7 @@ mod_download_sub_csv_server <- function(id, dat, settings){
    current_dat <- reactive({
      
      dat_1 <- replace_sequences(dat(),
-                                threshold = as.numeric(input[["hamuro_threshold"]]))
+                                threshold = as.numeric(settings()[["hamuro_threshold"]]))
 
      
      dat_2 <- if(input[["use_rescaled"]]){
@@ -104,16 +105,16 @@ mod_download_sub_csv_server <- function(id, dat, settings){
          
          ret_params <- create_retention_dataset(dat_1, 
                                                 state = state,
-                                                time_0 = as.numeric(input[["time_0"]]),
-                                                time_100 = as.numeric(input[["time_100"]]),
-                                                deut_part = as.numeric(input[["deut_part"]]))
+                                                time_0 = as.numeric(settings()[["time_0"]]),
+                                                time_100 = as.numeric(settings()[["time_100"]]),
+                                                deut_part = as.numeric(settings()[["deut_part"]]))
          create_rescaled_uptake_dataset(dat_1, 
                                         ret_params = ret_params, 
                                         state = state,
-                                        scaling_value = input[["rescaling_value"]],
-                                        time_0 = as.numeric(input[["time_0"]]),
-                                        time_100 = as.numeric(input[["time_100"]]),
-                                        deut_part = as.numeric(input[["deut_part"]]))
+                                        scaling_value = settings()[["rescaling_value"]],
+                                        time_0 = as.numeric(settings()[["time_0"]]),
+                                        time_100 = as.numeric(settings()[["time_100"]]),
+                                        deut_part = as.numeric(settings()[["deut_part"]]))
          
        }) %>% bind_rows()
        
