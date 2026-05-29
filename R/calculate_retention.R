@@ -43,7 +43,7 @@ create_retention_dataset <- function(dat,
     mutate(seq_length = nchar(Sequence))
   
   h_res["h_ret"] <- lapply(1:nrow(h_res), function(i){
-    splitteR::calculate_hrate(sequence = h_res[i, "Sequence"])
+    splitteR::calculate_hrate(sequence = toupper(h_res[i, "Sequence"]))
   }) %>% unlist(.)
   
   res <- merge(kin_dat_fd, h_res, by = c("Protein", "Sequence", "Start", "End", "Modification")) %>%
@@ -72,7 +72,7 @@ create_retention_dataset_2 <- function(dat,
     filter(State == state, Exposure == time_100)
   
   mass_dat_fd["h_ret"] <- lapply(1:nrow(mass_dat_fd), function(i){
-    splitteR::calculate_hrate(sequence = mass_dat_fd[i, ][["Sequence"]])
+    splitteR::calculate_hrate(sequence = toupper(mass_dat_fd[i, ][["Sequence"]]))
   }) %>% unlist(.)
   
   res <- mass_dat_fd %>%
