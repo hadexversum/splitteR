@@ -15,24 +15,32 @@
 plot_uc_with_origin <- function(dat,
                                 subsection_dat,
                                 subsection,
+                                time_0 = min(subsection_dat[["Exposure"]]),
+                                time_100 = max(subsection_dat[["Exposure"]]),
                                 state = dat[["State"]][1],
                                 deut_part = 0.9){
   
   assert(subsection[["common"]]!="origin")
   
   longer_kin_dat <- calculate_peptide_kinetics(dat,
+                                               time_0 = time_0, 
+                                               time_100 = time_100, 
                                                sequence = subsection[, "longer_sequence"],
                                                start = subsection[, "longer_start"],
                                                end = subsection[, "longer_end"],
                                                states = state)
   
   shorter_kin_dat <- calculate_peptide_kinetics(dat,
+                                                time_0 = time_0, 
+                                                time_100 = time_100, 
                                                 sequence = subsection[, "shorter_sequence"],
                                                 start = subsection[, "shorter_start"],
                                                 end = subsection[, "shorter_end"],
                                                 states = state)
   
-  sub_kin_dat <- calculate_peptide_kinetics(subsection_dat)
+  sub_kin_dat <- calculate_peptide_kinetics(subsection_dat,
+                                            time_0 = time_0, 
+                                            time_100 = time_100)
   
   sub_max_uptake <- stringr::str_count(unique(sub_kin_dat[["Sequence"]]), "[A-Z]")
   

@@ -36,9 +36,7 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
     })
     
     rescaled_dat <- reactive({
-      
-      # browser()
-      
+
       dat() %>%
         filter(State == settings()[["state"]]) %>%
         create_rescaled_uptake_dataset(.,
@@ -60,8 +58,6 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
       if(subsections()[input[["subsections_list_rows_selected"]], "common"] == "origin"){
         
         ## origin peptide
-        
-        # browser()
         
         pep_dat <- dat() %>%
           filter(Sequence == subsections()[input[["subsections_list_rows_selected"]], "sub_sequence"],
@@ -96,12 +92,16 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
         plt <- if(settings()[["if_rescaled"]]){
           
           plot_uc_with_origin(dat = rescaled_dat(), 
+                              time_0 = settings()[["time_0"]], 
+                              time_100 = settings()[["time_100"]], 
                               subsection = subsections()[input[["subsections_list_rows_selected"]], ],
                               subsection_dat = subsection_dat())
      
         } else {
           
             plot_uc_with_origin(dat = dat(), 
+                                time_0 = settings()[["time_0"]], 
+                                time_100 = settings()[["time_100"]], 
                                 subsection = subsections()[input[["subsections_list_rows_selected"]], ],
                                 subsection_dat = subsection_dat())
         }

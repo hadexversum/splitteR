@@ -143,3 +143,60 @@ get_subsection_data <- function(dat,
   
   
 }
+
+
+#' calculate mass uptake for one subsection with error
+#' 
+#' @description
+#' This is function similar to get_subsection_data but with 
+#' propaged error. Currently it is in a separate function 
+#' as it may broke the exisitng workflow.
+#' 
+#' 
+#' @examples
+#' subsections <- create_subsections(alpha_dat)
+#' subsection <- subsections[3, ]
+#' get_subsection_data_w_error(dat = alpha_dat, subsection = subsection)
+#' 
+#' @export
+get_subsection_data_w_error <- function(dat,
+                                        state = dat[["State"]][1],
+                                        subsection){
+  
+  assert(subsection[["common"]]!="origin")
+  
+  ##
+  
+  longer_dat_mass <- dat %>%
+    filter(Sequence == subsection[, "longer_sequence"],
+           Start == subsection[, "longer_start"],
+           End == subsection[, "longer_end"],
+           State == state) %>%
+    calculate_exp_masses_per_replicate()
+  
+  shorter_dat_mass <- dat %>%
+    filter(Sequence == subsection[, "shorter_sequence"],
+           Start == subsection[, "shorter_start"],
+           End == subsection[, "shorter_end"],
+           State == state) %>%
+    calculate_exp_masses_per_replicate()
+  
+  
+  ##
+  
+  merge(longer_dat_mass, shorter_dat_mass, by = c("Protein", "Modification", "State", "Exposure", "File")) %>%
+    select( -MaxUptake.x, -MaxUptake.y, - Sequence.x, -Sequence.y, -MHP.x, -MHP.y) %>%
+    mutate(Center = avg_exp_mass.x - avg_exp_mass.y) %>%
+    mutate(MaxUptake = stringr::str_count(subsection[, "sub_sequence"], "[A-Z]"),
+           MHP = 1,
+           Start = subsection[, "sub_start"], 
+           End = subsection[, "sub_end"],
+           Sequence = subsection[, "sub_sequence"],
+           Fragment = "",
+           z = 1,
+           RT = 1,
+           Inten = 1) %>%
+    select(-Start.x, -End.x, -Start.y, -End.y, -avg_exp_mass.x, -avg_exp_mass.y) 
+  
+  
+}
