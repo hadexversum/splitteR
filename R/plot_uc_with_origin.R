@@ -59,10 +59,10 @@ plot_uc_with_origin <- function(dat,
                                             fill = shorter_sequence),  alpha = 0.15) +   
       geom_point(dat = sub_kin_dat, aes(x = Exposure, y = deut_uptake, color = sub_sequence)) +
       geom_line(dat = sub_kin_dat, aes(x = Exposure, y = deut_uptake, color = sub_sequence), linetype = 2) +
-      geom_ribbon(dat = sub_kin_dat, aes(x = Exposure, 
-                                            ymin = deut_uptake - err_deut_uptake,
-                                            ymax = deut_uptake + err_deut_uptake,
-                                            fill = sub_sequence),  alpha = 0.15) + 
+      # geom_ribbon(dat = sub_kin_dat, aes(x = Exposure, 
+      #                                       ymin = deut_uptake - err_deut_uptake,
+      #                                       ymax = deut_uptake + err_deut_uptake,
+      #                                       fill = sub_sequence),  alpha = 0.15) + 
       scale_x_log10() + 
       ylim(c(low_y-1, NA)) +
       geom_hline(yintercept = 0, linetype = "dotted", size = 0.25) +
