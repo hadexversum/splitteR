@@ -26,7 +26,7 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
     output[["subsections_list"]] <- DT::renderDataTable({
     
       nicer_table(tbl_dat = subsections(), filename = "subsections_data", selection = "single")
-    })
+    }, server = FALSE)
     
     subsection_dat <- reactive({
       

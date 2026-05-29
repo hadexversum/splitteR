@@ -36,7 +36,8 @@ mod_sequence_work_server <- function(id, dat, settings){
       seqs() %>%
         nicer_table(tbl_dat = ., filename = "sequence_convention")
       
-    })
+    }, 
+    server = FALSE)
   })
 }
     

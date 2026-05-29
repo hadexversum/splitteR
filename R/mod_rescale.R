@@ -79,7 +79,8 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
         # select(ID, Protein, Sequence, State, Start, End, Modification, seq_length, MaxUptake, deut_uptake, h_ret, theo_ret, max_exp_ret, ret_scale, ret_ratio, back_exchange, err_back_exchange) #, avg_rt)
       
     },
-    selection = "single")
+    selection = "single",
+    server = FALSE)
  
     ##
     
