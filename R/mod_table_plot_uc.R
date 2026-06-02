@@ -94,16 +94,18 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
           plot_uc_with_origin(dat = rescaled_dat(), 
                               time_0 = settings()[["time_0"]], 
                               time_100 = settings()[["time_100"]], 
-                              subsection = subsections()[input[["subsections_list_rows_selected"]], ],
-                              subsection_dat = subsection_dat())
+                              subsection = subsections()[input[["subsections_list_rows_selected"]], ] #,
+                              # subsection_dat = subsection_dat()
+                              )
      
         } else {
           
             plot_uc_with_origin(dat = dat(), 
                                 time_0 = settings()[["time_0"]], 
                                 time_100 = settings()[["time_100"]], 
-                                subsection = subsections()[input[["subsections_list_rows_selected"]], ],
-                                subsection_dat = subsection_dat())
+                                subsection = subsections()[input[["subsections_list_rows_selected"]], ] #,
+                                # subsection_dat = subsection_dat()
+                                )
         }
         
         

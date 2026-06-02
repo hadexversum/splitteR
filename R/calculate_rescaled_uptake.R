@@ -1,5 +1,5 @@
 #' @examples
-#' pep_dat <- filter(alpha_dat, Sequence == "LKSPAG", Start == 5, End == 10, State == "Alpha_KSCN")
+#' pep_dat <- dplyr::filter(alpha_dat, Sequence == "LKSPAG", Start == 5, End == 10, State == "Alpha_KSCN")
 #' ret_scale <- create_retention_dataset(alpha_dat, state = "Alpha_KSCN", time_0 = min(alpha_dat[["Exposure"]]), 
 #'                                       time_100 = max(alpha_dat[["Exposure"]]), deut_part = 0.9) %>%
 #'                                       filter(Sequence == "LKSPAG", Start == 5, End == 10) %>% .[["ret_scale"]]
@@ -43,6 +43,7 @@ calculate_rescaled_uptake <- function(pep_dat,
            End = as.numeric(End),
            Exposure = as.numeric(Exposure),
            Center = as.numeric(Center)) %>%
+    arrange(Exposure) %>%
     select(-sc_uptake)
   
   tmp_dat
