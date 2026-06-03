@@ -71,7 +71,7 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
             filter(Sequence == subsections()[input[["subsections_list_rows_selected"]], "sub_sequence"],
                    Start == subsections()[input[["subsections_list_rows_selected"]], "sub_start"],
                    End == subsections()[input[["subsections_list_rows_selected"]], "sub_end"]) %>%
-            .[[settings()[["rescailing_value"]]]]
+            .[[settings()[["rescaling_value"]]]]
           
           pep_dat <- calculate_rescaled_uptake(pep_dat, 
                                                ret_scale = ret_scale,
@@ -80,11 +80,21 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
                                                deut_part = settings()[["deut_part"]])
         }
         
-        plt <- calculate_peptide_kinetics(pep_dat,
-                                          states = settings()[["state"]]) %>%
-          plot_uptake_curve(.) +
-          ggplot2::ylim(c(0, NA))
         
+        plt <- calculate_deut_uptake(pep_dat,
+                                     state = settings()[["state"]]) %>%
+          ggplot2::ggplot(aes(x = Exposure, y = deut_uptake)) +
+            geom_point() + 
+            geom_line() +
+            geom_ribbon(aes(x = Exposure, 
+                          ymin = deut_uptake - err_deut_uptake, 
+                          ymax = deut_uptake + err_deut_uptake),  alpha = 0.15) +
+          scale_x_log10() + 
+          theme(legend.position = "bottom") +
+          labs(title = paste0("Deuterium uptake for ", subsections()[input[["subsections_list_rows_selected"]], "sub_sequence"]),
+               x = "Exposure [log(min)]",
+               y = "Deuterium uptake [Da]")
+            
       } else {
         
         ## subsected peptide

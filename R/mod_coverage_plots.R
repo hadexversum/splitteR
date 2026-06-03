@@ -43,7 +43,9 @@ mod_coverage_server <- function(id, dat, subsections){
     
     dat_subsections <- reactive({
       # browser()
-      create_subsections_dataset(dat = dat(), subsections = subsections())
+      create_subsections_dataset(dat = dat(), 
+                                 subsections = subsections(), 
+                                 time_0 = settings()[["time_0"]])
     })
     
   })

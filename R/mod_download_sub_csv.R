@@ -45,29 +45,6 @@ mod_download_sub_csv_server <- function(id, dat, settings){
             checkboxInput(inputId = ns("fix_negative"),
                           label = "Change negative values to zero?",
                           value = TRUE),
-             # splitLayout(
-             #   selectInput(inputId = ns("time_0"),
-             #               label = "Select no deut timepoint",
-             #               choices = unique(dat()[["Exposure"]]),
-             #               selected = min(unique(dat()[["Exposure"]]))), 
-             #   selectInput(inputId = ns("time_100"),
-             #               label = "Select FD timepoint",
-             #               choices = unique(dat()[["Exposure"]]),
-             #               selected = max(unique(dat()[["Exposure"]])))
-             #   
-             # ),
-             # splitLayout(
-             #   numericInput(inputId = ns("deut_part"),
-             #                label = "Deuterium concentration:",
-             #                value = 0.9),
-             #   numericInput(inputId = ns("hamuro_threshold"),
-             #                label = "Hamuro retention threshold:",
-             #                value = 0.3)
-             # ),
-            # selectInput(inputId = ns("rescaling_value"),
-            #             label = "Select rescaling value:",
-            #             choices = c("ret_scale", "ret_scale_2", "theo_ret"),
-            #             selected = "ret_scale"),
             p("Previously selected parameters in the main window are used to prepare the download."),
             br(),
             downloadButton(outputId = ns("download_button"),
@@ -141,6 +118,7 @@ mod_download_sub_csv_server <- function(id, dat, settings){
        state_dat <- filter(current_dat(), State == state)
        
        create_subsections_dataset(dat = state_dat, 
+                                  time_0 = settings()[["time_0"]], 
                                   subsections = create_subsections(state_dat,
                                                                    use_convention = TRUE)) %>%
          dplyr::filter(MaxUptake!=0)

@@ -65,6 +65,7 @@ app_server <- function(input, output, session) {
       state_dat <- filter(dat(), State == settings()[["state"]])
       
       create_subsections_dataset(dat = state_dat, 
+                                 time_0 = settings()[["time_0"]],
                                  subsections = create_subsections(state_dat,
                                                                   use_convention = TRUE))
     
