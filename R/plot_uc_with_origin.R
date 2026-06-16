@@ -28,7 +28,8 @@ plot_uc_with_origin <- function(dat,
                                           sequence = subsection[["longer_sequence"]],
                                           start = subsection[["longer_start"]],
                                           end = subsection[["longer_end"]],
-                                          time_0 = time_0)
+                                          time_0 = time_0) %>%
+    filter(Exposure > time_0)
   
   
   shorter_kin_dat <- calculate_deut_uptake(dat, 
@@ -36,13 +37,15 @@ plot_uc_with_origin <- function(dat,
                                            sequence = subsection[["shorter_sequence"]],
                                            start = subsection[["shorter_start"]],
                                            end = subsection[["shorter_end"]],
-                                           time_0 = time_0)
+                                           time_0 = time_0) %>%
+    filter(Exposure > time_0)
  
   
   
   sub_kin_dat <- calculate_sub_deut_uptake(subsection = subsection, 
                                            kin_dat_longer = longer_kin_dat,
-                                           kin_dat_shorter = shorter_kin_dat)
+                                           kin_dat_shorter = shorter_kin_dat) %>%
+    filter(Exposure > time_0)
     
   
   sub_max_uptake <- unique(sub_kin_dat[["MaxUptake"]])
