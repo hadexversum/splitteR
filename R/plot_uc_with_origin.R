@@ -30,12 +30,14 @@ plot_uc_with_origin <- function(dat,
                                           end = subsection[["longer_end"]],
                                           time_0 = time_0)
   
+  
   shorter_kin_dat <- calculate_deut_uptake(dat, 
                                            state = state,
                                            sequence = subsection[["shorter_sequence"]],
                                            start = subsection[["shorter_start"]],
                                            end = subsection[["shorter_end"]],
                                            time_0 = time_0)
+ 
   
   
   sub_kin_dat <- calculate_sub_deut_uptake(subsection = subsection, 

@@ -19,19 +19,15 @@ calculate_rescaled_uptake <- function(pep_dat,
   Start <- as.numeric(unique(pep_dat[["Start"]]))
   End <- as.numeric(unique(pep_dat[["End"]]))
   
-  tmp_dat <- HaDeX2::calculate_peptide_kinetics(pep_dat,
-                                                time_0 = time_0, 
-                                                time_100 = time_100,
-                                                states = State) %>%
-    mutate(sc_uptake = deut_uptake * ret_scale) %>%
-    select(Protein, Sequence, Start, End, State, Exposure, Modification, sc_uptake) 
+  kin_dat <- calculate_deut_uptake(dat = pep_dat, 
+                                   time_0 = time_0,
+                                   deut_part = deut_part,
+                                   state = State) %>%
+    mutate(deut_uptake = deut_uptake * ret_scale)
+    
   
-  tmp_dat <- rbind(tmp_dat, c(Protein, Sequence, Start, End, State, time_0, "", 0))
-  
-  tmp_dat <- rbind(tmp_dat, c(Protein, Sequence, Start, End, State, time_100, "", deut_part*MaxUptake))
-  
-  tmp_dat <- tmp_dat %>% mutate(Fragment = "",
-                                Center = sc_uptake, 
+  tmp_dat <- kin_dat %>% mutate(Fragment = "",
+                                Center = deut_uptake, 
                                 MaxUptake = MaxUptake, 
                                 MHP = MHP,
                                 Modification = NA,
@@ -44,14 +40,12 @@ calculate_rescaled_uptake <- function(pep_dat,
            Exposure = as.numeric(Exposure),
            Center = as.numeric(Center)) %>%
     arrange(Exposure) %>%
-    select(-sc_uptake)
+    select(-deut_uptake, -err_deut_uptake)
   
   tmp_dat
   
   
 }
-
-
 
 #' @importFrom dplyr arrange
 #' 
@@ -105,23 +99,17 @@ create_rescaled_uptake_dataset <- function(dat,
     Protein <- unique(pep_dat[["Protein"]])
     State <- unique(pep_dat[["State"]])
     
-    tmp_dat <- HaDeX2::calculate_peptide_kinetics(pep_dat,
-                                                  time_0 = time_0, 
-                                                  time_100 = time_100) %>%
-      mutate(sc_uptake = deut_uptake * ret_scale ) %>%
-      select(Protein, Sequence, Start, End, State, Exposure, Modification, sc_uptake) 
-    
-    tmp_dat <- rbind(tmp_dat, c(Protein, peptide_list[[i, "Sequence"]], peptide_list[[i, "Start"]],
-                                peptide_list[[i, "End"]], State, time_0, NA, 0))
-    
-    tmp_dat <- rbind(tmp_dat, c(Protein, peptide_list[[i, "Sequence"]], peptide_list[[i, "Start"]],
-                                peptide_list[[i, "End"]], State, time_100, NA, deut_part*MaxUptake))
+    kin_dat <- calculate_deut_uptake(dat = pep_dat, 
+                                     time_0 = time_0,
+                                     deut_part = deut_part,
+                                     state = State) %>%
+      mutate(deut_uptake = deut_uptake * ret_scale)
     
     tmp_dat <- if(for_download){
       
-      tmp_dat %>% 
+      kin_dat %>% 
         mutate(Fragment = "",
-               Center = sc_uptake, 
+               Center = as.numeric(deut_uptake), 
                MaxUptake = MaxUptake, 
                MHP = MHP,
                File = paste0("file_", Exposure),
@@ -131,14 +119,15 @@ create_rescaled_uptake_dataset <- function(dat,
         mutate(Start = as.numeric(Start),
                End = as.numeric(End),
                Exposure = as.numeric(Exposure),
-               Modification = NA,
+               Modification = Modification,
                Center = as.numeric(Center)) %>%
-        select(-sc_uptake)
+        arrange(Start, End, Exposure) %>%
+        select(-deut_uptake, -err_deut_uptake)
       
     } else {
       
-      tmp_dat %>% 
-        mutate(Center = as.numeric(sc_uptake), 
+      kin_dat %>% 
+        mutate(Center = as.numeric(deut_uptake), 
                MaxUptake = as.numeric(MaxUptake), 
                MHP = as.numeric(MHP),
                File = paste0("file_", Exposure),
@@ -146,10 +135,11 @@ create_rescaled_uptake_dataset <- function(dat,
                z = 1) %>%
         mutate(Start = as.numeric(Start),
                End = as.numeric(End),
-               Modification = NA,
+               Modification = Modification,
                Exposure = as.numeric(Exposure),
                Center = as.numeric(Center)) %>%
-        select(-sc_uptake)
+        arrange(Start, End, Exposure) %>%
+        select(-deut_uptake, -err_deut_uptake)
       
     }
      
