@@ -42,11 +42,7 @@ calculate_deut_uptake <- function(dat,
   kin_dat <- pep_dat %>%
     mutate(deut_uptake = mass - mass_0, 
            err_deut_uptake = sqrt(err_mass^2 + err_mass_0^2)) %>%
-    select(-mass, -err_mass) %>%
-    filter(Exposure >= time_0)
-  
-  
-  attr(kin_dat, "time_0") <- time_0
+    select(-mass, -err_mass) 
   
   return(kin_dat)
   

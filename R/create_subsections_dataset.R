@@ -18,10 +18,12 @@ create_subsections_dataset <- function(dat,
                                        subsections,
                                        time_0 = min(dat[["Exposure"]])){
   
+  ## version with deut_uptake 
+  
   states <- unique(dat[["State"]])
-
+  
   res_uc <- lapply(1:nrow(subsections), function(i){
-
+    
     lapply(states, function(state){
       
       if(subsections[i, "common"] == "origin"){
@@ -31,16 +33,7 @@ create_subsections_dataset <- function(dat,
                               sequence = subsections[i, "sub_sequence"],
                               start = subsections[i, "sub_start"],
                               end = subsections[i, "sub_end"],
-                              time_0 = time_0) %>%
-          rename(Center = deut_uptake) %>%
-          select(-err_deut_uptake) %>%
-          mutate(Fragment = "",
-                 z = 1,
-                 RT = 1,
-                 Inten = 1,
-                 File = paste0("file_", Exposure)) %>%
-          select(Protein,Start,End,Sequence,Modification,Fragment,MaxUptake,MHP,State,Exposure,File,z,RT,Inten,Center) %>%
-          arrange(Start, End, Exposure)
+                              time_0 = time_0) 
         
       } else {
         
@@ -64,17 +57,8 @@ create_subsections_dataset <- function(dat,
                                                  kin_dat_shorter = shorter_kin_dat)
         
         sub_kin_dat %>%
-          rename(Center = deut_uptake) %>%
-          select(-err_deut_uptake) %>%
-          mutate(Fragment = "",
-                 MHP = 0,
-                 z = 1,
-                 RT = 1,
-                 Inten = 1,
-                 File = paste0("file_", Exposure)) %>%
-          select(Protein,Start,End,Sequence,Modification,Fragment,MaxUptake,MHP,State,Exposure,File,z,RT,Inten,Center) %>%
           arrange(Start, End, Exposure)
-          
+        
       }
       
     }) %>% bind_rows()
@@ -83,6 +67,75 @@ create_subsections_dataset <- function(dat,
   return(res_uc)
   
 }
+# create_subsections_dataset <- function(dat, 
+#                                        subsections,
+#                                        time_0 = min(dat[["Exposure"]])){
+#   
+#   states <- unique(dat[["State"]])
+# 
+#   res_uc <- lapply(1:nrow(subsections), function(i){
+# 
+#     lapply(states, function(state){
+#       
+#       if(subsections[i, "common"] == "origin"){
+#         
+#         calculate_deut_uptake(dat, 
+#                               state = state,
+#                               sequence = subsections[i, "sub_sequence"],
+#                               start = subsections[i, "sub_start"],
+#                               end = subsections[i, "sub_end"],
+#                               time_0 = time_0) %>%
+#           rename(Center = deut_uptake) %>%
+#           select(-err_deut_uptake) %>%
+#           mutate(Fragment = "",
+#                  z = 1,
+#                  RT = 1,
+#                  Inten = 1,
+#                  File = paste0("file_", Exposure)) %>%
+#           select(Protein,Start,End,Sequence,Modification,Fragment,MaxUptake,MHP,State,Exposure,File,z,RT,Inten,Center) %>%
+#           arrange(Start, End, Exposure)
+#         
+#       } else {
+#         
+#         longer_kin_dat <- calculate_deut_uptake(dat, 
+#                                                 state = state, 
+#                                                 sequence = subsections[i, "longer_sequence"],
+#                                                 start = subsections[i, "longer_start"],
+#                                                 end = subsections[i, "longer_end"],
+#                                                 time_0 = time_0)
+#         
+#         shorter_kin_dat <- calculate_deut_uptake(dat, 
+#                                                  state = state,
+#                                                  sequence = subsections[i, "shorter_sequence"],
+#                                                  start = subsections[i, "shorter_start"],
+#                                                  end = subsections[i, "shorter_end"],
+#                                                  time_0 = time_0)
+#         
+#         
+#         sub_kin_dat <- calculate_sub_deut_uptake(subsection = subsections[i, ], 
+#                                                  kin_dat_longer = longer_kin_dat,
+#                                                  kin_dat_shorter = shorter_kin_dat)
+#         
+#         sub_kin_dat %>%
+#           rename(Center = deut_uptake) %>%
+#           select(-err_deut_uptake) %>%
+#           mutate(Fragment = "",
+#                  MHP = 0,
+#                  z = 1,
+#                  RT = 1,
+#                  Inten = 1,
+#                  File = paste0("file_", Exposure)) %>%
+#           select(Protein,Start,End,Sequence,Modification,Fragment,MaxUptake,MHP,State,Exposure,File,z,RT,Inten,Center) %>%
+#           arrange(Start, End, Exposure)
+#           
+#       }
+#       
+#     }) %>% bind_rows()
+#   }) %>% bind_rows()
+#   
+#   return(res_uc)
+#   
+# }
 
 # create_subsections_dataset_old <- function(dat, 
 #                                        subsections){

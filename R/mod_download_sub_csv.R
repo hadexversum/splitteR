@@ -133,7 +133,7 @@ mod_download_sub_csv_server <- function(id, dat, settings){
     
     if(input[["fix_negative"]]){
       subs_dat() %>%
-        mutate(Center = if_else(Center<0, 0, Center))
+        mutate(deut_uptake = if_else(deut_uptake<0, 0, deut_uptake))
       
     } else {
       subs_dat()
@@ -147,9 +147,7 @@ mod_download_sub_csv_server <- function(id, dat, settings){
     if(input[["use_subfragments"]]){
       final_subs_dat()
     } else {
-      current_dat() %>%
-        mutate(Fragment = "",
-               RT = 1)
+      current_dat() 
     }
     
   })
@@ -169,7 +167,7 @@ mod_download_sub_csv_server <- function(id, dat, settings){
 
       filename = function(){ download_filename() } ,
       content = function(file){
-        write.csv(download_dat(),
+        write.csv(make_downloadable_file(download_dat()),
                   file = file,
                   quote = FALSE,
                   row.names = FALSE)}
