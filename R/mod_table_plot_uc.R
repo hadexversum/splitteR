@@ -44,8 +44,7 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
                                        scaling_value = settings()[["rescaling_value"]], 
                                        time_0 = settings()[["time_0"]],
                                        time_100 = settings()[["time_100"]],
-                                       deut_part = settings()[["deut_part"]],
-                                       for_download = FALSE)
+                                       deut_part = settings()[["deut_part"]])
       
     })
     

@@ -27,11 +27,6 @@ app_server <- function(input, output, session) {
   mod_coverage_server("coverage_plots", dat = dat, subsections = subsections)
   
   # observe({
-  # 
-  #   input[["test"]]
-  # 
-  #   # browser()
-  # 
   #   # settings()[["state"]]
   #   # settings()[["time_0"]]
   #   # settings()[["time_100"]]

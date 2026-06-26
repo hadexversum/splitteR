@@ -25,7 +25,6 @@ mod_retention_plot_server <- function(id, dat, settings){
     
     output[["hamuro_heatmap"]] <- renderPlot({
       
-      # browser()
       splitteR::plot_hrates_heatmap(dat = dat(),
                                     hamuro_threshold = as.numeric(settings()[["hamuro_threshold"]]))
     })

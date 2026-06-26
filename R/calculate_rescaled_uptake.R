@@ -56,16 +56,15 @@ calculate_rescaled_uptake <- function(pep_dat,
 #' @param time_0 time of undeuterated measurement
 #' @param time_100 time of FD measurement
 #' @param deut_part procentage of deuterium in buffer
-#' @param for_downlad indicator if the data shoul be in 
-#' form coherent with uploadable file
 #' 
 #' @examples
 #' ret_params <- create_retention_dataset(alpha_dat, state = "Alpha_KSCN")
 #' x <- create_rescaled_uptake_dataset(alpha_dat, ret_params, state = "Alpha_KSCN")
-#' xx <- create_rescaled_uptake_dataset(alpha_dat, ret_params, for_download = TRUE)
+#' xx <- create_rescaled_uptake_dataset(alpha_dat, ret_params)
 #' 
 #' 
 #' @export
+
 
 create_rescaled_uptake_dataset <- function(dat, 
                                            ret_params,
@@ -73,8 +72,7 @@ create_rescaled_uptake_dataset <- function(dat,
                                            state = dat[["State"]][1],
                                            time_0 = min(dat[["Exposure"]]),
                                            time_100 = max(dat[["Exposure"]]),
-                                           deut_part = 0.9,
-                                           for_download = FALSE){
+                                           deut_part = 0.9){
   
   peptide_list <- unique(select(dat, Sequence, Start, End))
   
@@ -102,36 +100,16 @@ create_rescaled_uptake_dataset <- function(dat,
     kin_dat <- calculate_deut_uptake(dat = pep_dat, 
                                      time_0 = time_0,
                                      deut_part = deut_part,
-                                     state = State) %>%
+                                     state = state) %>%
       mutate(deut_uptake = deut_uptake * ret_scale)
     
-    tmp_dat <- if(for_download){
-      
-      kin_dat %>% 
-        mutate(Fragment = "",
-               Center = as.numeric(deut_uptake), 
-               MaxUptake = MaxUptake, 
-               MHP = MHP,
-               File = paste0("file_", Exposure),
-               Inten = 1, 
-               z = 1,
-               RT = 0) %>%
-        mutate(Start = as.numeric(Start),
-               End = as.numeric(End),
-               Exposure = as.numeric(Exposure),
-               Modification = Modification,
-               Center = as.numeric(Center)) %>%
-        arrange(Start, End, Exposure) %>%
-        select(-deut_uptake, -err_deut_uptake)
-      
-    } else {
-      
-      kin_dat %>% 
-        mutate(Center = as.numeric(deut_uptake), 
-               MaxUptake = as.numeric(MaxUptake), 
+
+    tmp_dat <-  kin_dat %>% 
+        mutate(Center = as.numeric(deut_uptake),
+               MaxUptake = as.numeric(MaxUptake),
                MHP = as.numeric(MHP),
                File = paste0("file_", Exposure),
-               Inten = 1, 
+               Inten = 1,
                z = 1) %>%
         mutate(Start = as.numeric(Start),
                End = as.numeric(End),
@@ -140,10 +118,7 @@ create_rescaled_uptake_dataset <- function(dat,
                Center = as.numeric(Center)) %>%
         arrange(Start, End, Exposure) %>%
         select(-deut_uptake, -err_deut_uptake)
-      
-    }
-     
-    
+
     tmp_dat
     
   }) %>% bind_rows()

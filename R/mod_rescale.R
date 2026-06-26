@@ -128,8 +128,6 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
     
     output[["res_scatter"]] <- renderPlot({
       
-      # browser()
-      
       ggplot(res_dat()) +
         geom_segment(aes(x = Start, xend = End, y = ret_scale, color = seq_length), size = 2) + 
         geom_hline(yintercept = 1, linewidth = 0.5, color = "red", linetype = "dashed", alpha = 0.3) + 
@@ -143,8 +141,6 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
     })
     
     output[["res_scatter_2"]] <- renderPlot({
-      
-      # browser()
       
       ggplot(res_dat()) +
         geom_segment(aes(x = Start, xend = End, y = ret_scale_2, color = seq_length), size = 2) + 
@@ -245,8 +241,6 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
   
   
   output[["standard_bex"]] <- renderPlot({
-    
-    # browser()
     
     bex_dat <- calculate_back_exchange(dat = dat(), 
                                        states = settings()[["state"]],
