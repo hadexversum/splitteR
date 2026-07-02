@@ -62,7 +62,7 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
           filter(Sequence == subsections()[input[["subsections_list_rows_selected"]], "sub_sequence"],
                  Start == subsections()[input[["subsections_list_rows_selected"]], "sub_start"],
                  End == subsections()[input[["subsections_list_rows_selected"]], "sub_end"],
-                 State == settings()[["state"]]) 
+                 State == settings()[["state"]])  
         
         if(settings()[["if_rescaled"]]){
           
@@ -72,16 +72,19 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
                    End == subsections()[input[["subsections_list_rows_selected"]], "sub_end"]) %>%
             .[[settings()[["rescaling_value"]]]]
           
+         
+          
           pep_dat <- calculate_rescaled_uptake(pep_dat, 
                                                ret_scale = ret_scale,
                                                time_0 = settings()[["time_0"]], 
                                                time_100 = settings()[["time_100"]], 
-                                               deut_part = settings()[["deut_part"]])
+                                               deut_part = settings()[["deut_part"]]) 
         }
         
         
         plt <- calculate_deut_uptake(pep_dat,
                                      state = settings()[["state"]]) %>%
+          filter(Exposure > settings()[["time_0"]]) %>%
           ggplot2::ggplot(aes(x = Exposure, y = deut_uptake)) +
             geom_point() + 
             geom_line() +
