@@ -40,13 +40,13 @@ mod_settings_ui <- function(id) {
                    label = "Deuterium concentration:",
                    value = 0.9),
       div(
-        selectInput(inputId = ns("rescaling_value"),
-                    label = "Select rescaling value:",
-                    choices = c("ret_scale", "ret_scale_2", "theo_ret"),
-                    selected = "ret_scale"),
-        p("This is a scalling value for UC in `Rescaling` tab."),
         checkboxInput(inputId = ns("if_rescaled"),
-                      label = "Do you want to rescale the subfragment data?")
+                      label = "Do you want to rescale the subfragment data?"),
+        selectInput(inputId = ns("rescaling_value"),
+                    label = "Select rescaling value in UC tab:",
+                    choices = c("ret_scale", "ret_scale_2", "theo_ret"),
+                    selected = "ret_scale")
+        
       )
       
     ),
@@ -61,11 +61,13 @@ mod_settings_server <- function(id, dat){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
     
-    # observe({
-    #   
-    #   toggle("rescalling_value", condition = input[["if_rescaled"]])
-    #   
-    # })
+    observe({
+
+      shinyjs::toggle("rescaling_value", condition = input[["if_rescaled"]])
+
+    })
+
+    
     
     times <- reactive(unique(dat()[["Exposure"]]))
     

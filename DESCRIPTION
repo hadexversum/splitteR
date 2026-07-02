@@ -20,6 +20,7 @@ Imports:
     glue,
     patchwork,
     shiny,
+    shinyjs,
     tools
 Suggests: 
     testthat (>= 3.0.0)

@@ -7,6 +7,7 @@
 app_ui <- function(request) {
   tagList(
     golem_add_external_resources(),
+    useShinyjs(),
     apply_ui_settings(),
     fluidPage(
       br(),
@@ -76,6 +77,7 @@ golem_add_external_resources <- function() {
   library(ggplot2)
   library(HaDeX2)
   library(bslib)
+  library(shinyjs)
   
   tags$head(
     favicon(),
