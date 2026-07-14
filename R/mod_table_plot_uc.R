@@ -86,7 +86,11 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
                                      state = settings()[["state"]]) %>%
           filter(Exposure > settings()[["time_0"]]) %>%
           ggplot2::ggplot(aes(x = Exposure, y = deut_uptake)) +
-            geom_point() + 
+            ggiraph::geom_point_interactive(mapping = aes(x = Exposure, y = deut_uptake, 
+                                                 tooltip = glue("Sequence: {Sequence}
+                                                                Exposure: {Exposure} [min]
+                                                                DU: {round(deut_uptake, 2)} [Da]
+                                                                Err(DU): {round(err_deut_uptake, 2)} [Da]"))) +
             geom_line() +
             geom_ribbon(aes(x = Exposure, 
                           ymin = deut_uptake - err_deut_uptake, 
@@ -106,8 +110,9 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
           plot_uc_with_origin(dat = rescaled_dat(), 
                               time_0 = settings()[["time_0"]], 
                               time_100 = settings()[["time_100"]], 
-                              subsection = subsections()[input[["subsections_list_rows_selected"]], ] #,
+                              subsection = subsections()[input[["subsections_list_rows_selected"]], ] ,
                               # subsection_dat = subsection_dat()
+                              interactive = TRUE
                               )
      
         } else {
@@ -115,8 +120,9 @@ mod_table_plot_uc_server <- function(id, dat, subsections, settings, ret_params)
             plot_uc_with_origin(dat = dat(), 
                                 time_0 = settings()[["time_0"]], 
                                 time_100 = settings()[["time_100"]], 
-                                subsection = subsections()[input[["subsections_list_rows_selected"]], ] #,
+                                subsection = subsections()[input[["subsections_list_rows_selected"]], ] ,
                                 # subsection_dat = subsection_dat()
+                                interactive = TRUE
                                 )
         }
         

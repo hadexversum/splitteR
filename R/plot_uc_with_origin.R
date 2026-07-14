@@ -1,5 +1,7 @@
 #' Plot uc of subfragment with parent peptides
 #' 
+#' @importFrom ggiraph geom_point_interactive
+#' 
 #' @param dat original dat
 #' @param subsection record of chosen subsection 
 #' 
@@ -19,7 +21,8 @@ plot_uc_with_origin <- function(dat,
                                 time_0 = min(dat[["Exposure"]]),
                                 time_100 = max(dat[["Exposure"]]),
                                 state = dat[["State"]][1],
-                                deut_part = 0.9){
+                                deut_part = 0.9,
+                                interactive = FALSE){
   
   assert(subsection[["common"]]!="origin")
   
@@ -57,22 +60,58 @@ plot_uc_with_origin <- function(dat,
   
   low_y <- min(min(sub_kin_dat[["deut_uptake"]]), 0)
   
+  geom_point_longer <- if(interactive){
+    geom_point_interactive(data = longer_kin_dat, 
+                           mapping = aes(x = Exposure, y = deut_uptake, 
+                                         color = longer_sequence,
+                                         tooltip = glue("Sequence: {Sequence}
+                                                        Exposure: {Exposure} [min]
+                                                        DU: {round(deut_uptake, 2)} [Da]
+                                                        Err(DU): {round(err_deut_uptake, 2)} [Da]")))
+  } else {
+    geom_point(dat = longer_kin_dat, aes(x = Exposure, y = deut_uptake, color = longer_sequence)) 
+  }
+  
+  geom_point_shorter <- if(interactive){
+    geom_point_interactive(data = shorter_kin_dat, 
+                           mapping = aes(x = Exposure, y = deut_uptake, 
+                                         color = shorter_sequence,
+                                         tooltip = glue("Sequence: {Sequence}
+                                                        Exposure: {Exposure} [min]
+                                                        DU: {round(deut_uptake, 2)} [Da]
+                                                        Err(DU): {round(err_deut_uptake, 2)} [Da]")))
+  } else {
+    geom_point(data = shorter_kin_dat, aes(x = Exposure, y = deut_uptake, color = shorter_sequence))
+  }
+  
+  geom_point_subfragment <- if(interactive){
+    geom_point_interactive(data = sub_kin_dat, 
+                           mapping = aes(x = Exposure, y = deut_uptake, 
+                                         color = sub_sequence,
+                                         tooltip = glue("Sequence: {Sequence}
+                                                        Exposure: {Exposure} [min]
+                                                        DU: {round(deut_uptake, 2)} [Da]
+                                                        Err(DU): {round(err_deut_uptake, 2)} [Da]")))
+  } else {
+    geom_point(data = sub_kin_dat, aes(x = Exposure, y = deut_uptake, color = sub_sequence))
+  }
+  
   ggplot() +
-    geom_point(dat = longer_kin_dat, aes(x = Exposure, y = deut_uptake, color = longer_sequence)) +
-    geom_line(dat = longer_kin_dat, aes(x = Exposure, y = deut_uptake, color = longer_sequence)) +
-    geom_ribbon(dat = longer_kin_dat, aes(x = Exposure, 
+    geom_point_longer + 
+    geom_line(data = longer_kin_dat, aes(x = Exposure, y = deut_uptake, color = longer_sequence)) +
+    geom_ribbon(data = longer_kin_dat, aes(x = Exposure, 
                                           ymin = deut_uptake - err_deut_uptake,
                                           ymax = deut_uptake + err_deut_uptake,
                                           fill = longer_sequence),  alpha = 0.15) + 
-    geom_point(dat = shorter_kin_dat, aes(x = Exposure, y = deut_uptake, color = shorter_sequence)) +
-    geom_line(dat = shorter_kin_dat, aes(x = Exposure, y = deut_uptake, color = shorter_sequence)) +
-    geom_ribbon(dat = shorter_kin_dat, aes(x = Exposure, 
+    geom_point_shorter +
+    geom_line(data = shorter_kin_dat, aes(x = Exposure, y = deut_uptake, color = shorter_sequence)) +
+    geom_ribbon(data = shorter_kin_dat, aes(x = Exposure, 
                                            ymin = deut_uptake - err_deut_uptake,
                                            ymax = deut_uptake + err_deut_uptake,
                                            fill = shorter_sequence),  alpha = 0.15) +   
-    geom_point(dat = sub_kin_dat, aes(x = Exposure, y = deut_uptake, color = sub_sequence)) +
-    geom_line(dat = sub_kin_dat, aes(x = Exposure, y = deut_uptake, color = sub_sequence), linetype = 2) +
-    geom_ribbon(dat = sub_kin_dat, aes(x = Exposure,
+    geom_point_subfragment +
+    geom_line(data = sub_kin_dat, aes(x = Exposure, y = deut_uptake, color = sub_sequence), linetype = 2) +
+    geom_ribbon(data = sub_kin_dat, aes(x = Exposure,
                                           ymin = deut_uptake - err_deut_uptake,
                                           ymax = deut_uptake + err_deut_uptake,
                                           fill = sub_sequence),  alpha = 0.15) +
