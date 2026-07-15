@@ -145,18 +145,16 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
     ##
     
     output[["res_scatter"]] <- ggiraph::renderGirafe({
-      
-      ## here to check
-      
+
       plt <- ggplot(res_dat()) +
-        geom_segment_interactive(aes(x = Start, xend = End, y = ret_scale, 
+        geom_segment_interactive(aes(x = Start, xend = End, 
+                                     y = ret_scale, yend = ret_scale,
                                      tooltip = glue("Sequence: {Sequence}
                                                     Position: {Start}-{End}
                                                     ret_scale: {round(ret_scale, 2)}"),
                                      color = seq_length), size = 2) + 
         geom_hline(yintercept = 1, linewidth = 0.5, color = "red", linetype = "dashed", alpha = 0.3) + 
         scale_colour_gradientn(colours = terrain.colors(10)) +
-        # theme_bw(base_size = 18) +
         theme(legend.position = "bottom") +
         labs(x = "Protein sequence",
              y = "Normalisation to Nmax",
@@ -168,13 +166,15 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
     
     output[["res_scatter_2"]] <- ggiraph::renderGirafe({
       
-      ## ADD TOOLTIPS
-      
       plt <- ggplot(res_dat()) +
-        geom_segment(aes(x = Start, xend = End, y = ret_scale_2, color = seq_length), size = 2) + 
+        geom_segment_interactive(aes(x = Start, xend = End, 
+                                     y = ret_scale_2, yend = ret_scale_2, 
+                                     tooltip = glue("Sequence: {Sequence}
+                                                    Position: {Start}-{End}
+                                                    ret_scale_2: {round(ret_scale_2, 2)}"),
+                                     color = seq_length), size = 2) + 
         geom_hline(yintercept = 1, linewidth = 0.5, color = "red", linetype = "dashed", alpha = 0.3) + 
         scale_colour_gradientn(colours = terrain.colors(10)) +
-        # theme_bw(base_size = 18) +
         theme(legend.position = "bottom") +
         labs(x = "Protein sequence",
              y = "Normalisation to standard conditions",
@@ -188,12 +188,14 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
     
   output[["plot_FD"]] <- ggiraph::renderGirafe({
     
-    ## ADD TOOLTIPS
-    
     plt <- ggplot(res_dat()) +
-      geom_segment(aes(x = Start, xend = End, y = deut_uptake), size = 2) + 
+      geom_segment_interactive(aes(x = Start, xend = End, 
+                       y = deut_uptake, yend = deut_uptake,
+                       tooltip = glue("Sequence: {Sequence}
+                                      Position: {Start}-{End}
+                                      DU: {round(deut_uptake, 2)} [Da]")
+                       ), size = 2) + 
       # scale_colour_gradientn(colours = rainbow(10)) +
-      # theme_bw(base_size = 18) +
       theme(legend.position = "bottom") +
       labs(x = "Protein sequence",
            y = "FD [Da]",
@@ -205,12 +207,15 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
   ##
   
   output[["plot_h_ret"]] <- ggiraph::renderGirafe({
-    
-    ## ADD TOOLTIPS
-    
+
     plt <- ggplot(res_dat()) +
-      geom_segment(aes(x = Start, xend = End, y = h_ret), size = 2) + 
-      # theme_bw(base_size = 18) +
+      geom_segment_interactive(aes(x = Start, xend = End, 
+                                   y = h_ret, yend = h_ret,
+                                   tooltip = glue(
+                                     "Sequence: {Sequence}
+                                      Position: {Start}-{End}
+                                      h_ret: {round(h_ret, 2)}"
+                                   )), size = 2) + 
       theme(legend.position = "bottom") +
       labs(x = "Protein sequence",
            y = "Hamuro retention [Da]",
@@ -225,11 +230,23 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
   output[["plot_FD_h_ret"]] <- ggiraph::renderGirafe({
     
     plt <- ggplot(res_dat()) +
-      geom_segment(aes(x = Start, xend = End, 
-                                   y = h_ret, color = "h_ret"),
+      geom_segment_interactive(aes(x = Start, xend = End, 
+                                   y = h_ret, yend = h_ret, 
+                                   tooltip = glue(
+                                     "Sequence: {Sequence}
+                                      Position: {Start}-{End}
+                                      h_ret: {round(h_ret, 2)}"
+                                   ),
+                                   color = "h_ret"),
                                size = 2) + 
-      geom_segment(aes(x = Start, xend = End, 
-                                   y = deut_uptake, color = "FD"),
+      geom_segment_interactive(aes(x = Start, xend = End, 
+                                   y = deut_uptake, yend = deut_uptake,
+                                   tooltip = glue(
+                                     "Sequence: {Sequence}
+                                      Position: {Start}-{End}
+                                      DU: {round(deut_uptake, 2)} [Da]"
+                                   ),
+                                   color = "FD"),
                                size = 2) + 
       theme(legend.position = "bottom") +
       labs(x = "Protein sequence",
