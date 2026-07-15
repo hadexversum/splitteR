@@ -20,17 +20,17 @@ mod_rescale_ui <- function(id) {
     # p("avg_rt = mean retention time for t = FD"),
     p("Normalisation to Nmax: ret_scale = MaxUptake*deut_part/deut_uptake(t=FD)"), #  = 1/max_exp_ret
     p("Normalisation to standard conditions: ret_scale_2 = h_ret/deut_uptake(t = FD)"),
-    plotOutput(outputId = ns("uc_scaled")),
+    ggiraph::girafeOutput(outputId = ns("uc_scaled"), width = "80%"),
     uiOutput(outputId = ns("uc_info")),
-    plotOutput(outputId = ns("rescale_values")),
+    ggiraph::girafeOutput(outputId = ns("rescale_values"), width = "80%"),
     # p("Scaled uptake curve is the standard uptake curve times ret_scale parameter."),
-    plotOutput(outputId = ns("res_scatter")),
-    plotOutput(outputId = ns("res_scatter_2")),
-    plotOutput(outputId = ns("plot_FD")),
-    plotOutput(outputId = ns("plot_h_ret")),
-    plotOutput(outputId = ns("plot_FD_h_ret")),
+    ggiraph::girafeOutput(outputId = ns("res_scatter"), width = "80%"),
+    ggiraph::girafeOutput(outputId = ns("res_scatter_2"), width = "80%"),
+    ggiraph::girafeOutput(outputId = ns("plot_FD"), width = "80%"),
+    ggiraph::girafeOutput(outputId = ns("plot_h_ret"), width = "80%"),
+    ggiraph::girafeOutput(outputId = ns("plot_FD_h_ret"), width = "80%"),
     # plotOutput(outputId = ns("rt_vs_ratio")),
-    plotOutput(outputId = ns("standard_bex"))
+    ggiraph::girafeOutput(outputId = ns("standard_bex"), width = "80%")
     
   )
 }
@@ -84,22 +84,40 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
  
     ##
     
-    output[["rescale_values"]] <- renderPlot({
+    output[["rescale_values"]] <- ggiraph::renderGirafe({
       
-      ggplot(res_dat(), aes(x = ID)) + 
+      ## ADD TOOLTIPS
+      
+      plt <- ggplot(res_dat(), aes(x = ID)) + 
         geom_point(aes(y = ret_scale, color = "ret_scale")) +
+        ggiraph::geom_point_interactive(aes(y = ret_scale, 
+                                            color = "ret_scale",
+                                           tooltip = glue("Sequence: {Sequence}
+                                                          Position: {Start}-{End}
+                                                          ret_scale: {round(ret_scale, 4)}"))) + 
         geom_line(aes(y = ret_scale, color = "ret_scale")) + 
         geom_point(aes(y = ret_scale_2, color = "ret_scale_2")) +
+        ggiraph::geom_point_interactive(aes(y = ret_scale_2, 
+                                            color = "ret_scale_2",
+                                            tooltip = glue("Sequence: {Sequence}
+                                                          Position: {Start}-{End}
+                                                          ret_scale_2: {round(ret_scale_2, 4)}"))) + 
         geom_line(aes(y = ret_scale_2, color = "ret_scale_2")) +
         geom_point(aes(y = theo_ret, color = "theo_ret")) +
+        ggiraph::geom_point_interactive(aes(y = theo_ret, 
+                                            color = "theo_ret",
+                                            tooltip = glue("Sequence: {Sequence}
+                                                          Position: {Start}-{End}
+                                                          theo_ret: {round(theo_ret, 4)}"))) + 
         geom_line(aes(y = theo_ret, color = "theo_ret")) +
         labs(x = "Peptide ID", 
              y = "", 
              title = "Comparison of possible rescaling values",
              color = "") +
-        theme_bw(base_size = 18) +
+        # theme_bw(base_size = 18) +
         theme(legend.position = "bottom") 
       
+      ggiraph::girafe(ggobj = plt, width_svg = 7, height_svg = 4, opts_sizing(rescale = TRUE))
       
     })
     
@@ -126,68 +144,99 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
 
     ##
     
-    output[["res_scatter"]] <- renderPlot({
+    output[["res_scatter"]] <- ggiraph::renderGirafe({
       
-      ggplot(res_dat()) +
-        geom_segment(aes(x = Start, xend = End, y = ret_scale, color = seq_length), size = 2) + 
+      ## here to check
+      
+      plt <- ggplot(res_dat()) +
+        geom_segment_interactive(aes(x = Start, xend = End, y = ret_scale, 
+                                     tooltip = glue("Sequence: {Sequence}
+                                                    Position: {Start}-{End}
+                                                    ret_scale: {round(ret_scale, 2)}"),
+                                     color = seq_length), size = 2) + 
         geom_hline(yintercept = 1, linewidth = 0.5, color = "red", linetype = "dashed", alpha = 0.3) + 
         scale_colour_gradientn(colours = terrain.colors(10)) +
-        theme_bw(base_size = 18) +
+        # theme_bw(base_size = 18) +
         theme(legend.position = "bottom") +
         labs(x = "Protein sequence",
              y = "Normalisation to Nmax",
              color = "Peptide length")
       
+      ggiraph::girafe(ggobj = plt, width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
+      
     })
     
-    output[["res_scatter_2"]] <- renderPlot({
+    output[["res_scatter_2"]] <- ggiraph::renderGirafe({
       
-      ggplot(res_dat()) +
+      ## ADD TOOLTIPS
+      
+      plt <- ggplot(res_dat()) +
         geom_segment(aes(x = Start, xend = End, y = ret_scale_2, color = seq_length), size = 2) + 
         geom_hline(yintercept = 1, linewidth = 0.5, color = "red", linetype = "dashed", alpha = 0.3) + 
         scale_colour_gradientn(colours = terrain.colors(10)) +
-        theme_bw(base_size = 18) +
+        # theme_bw(base_size = 18) +
         theme(legend.position = "bottom") +
         labs(x = "Protein sequence",
              y = "Normalisation to standard conditions",
              color = "Peptide length")
       
+      ggiraph::girafe(ggobj = plt, width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
+      
     })
   
-  output[["plot_FD"]] <- renderPlot({
+    ##
     
-    ggplot(res_dat()) +
+  output[["plot_FD"]] <- ggiraph::renderGirafe({
+    
+    ## ADD TOOLTIPS
+    
+    plt <- ggplot(res_dat()) +
       geom_segment(aes(x = Start, xend = End, y = deut_uptake), size = 2) + 
       # scale_colour_gradientn(colours = rainbow(10)) +
-      theme_bw(base_size = 18) +
+      # theme_bw(base_size = 18) +
       theme(legend.position = "bottom") +
       labs(x = "Protein sequence",
            y = "FD [Da]",
            color = "Peptide length")
+    
+    ggiraph::girafe(ggobj = plt, width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
   })
   
   ##
-  output[["plot_h_ret"]] <- renderPlot({
+  
+  output[["plot_h_ret"]] <- ggiraph::renderGirafe({
     
-    ggplot(res_dat()) +
+    ## ADD TOOLTIPS
+    
+    plt <- ggplot(res_dat()) +
       geom_segment(aes(x = Start, xend = End, y = h_ret), size = 2) + 
-      theme_bw(base_size = 18) +
+      # theme_bw(base_size = 18) +
       theme(legend.position = "bottom") +
       labs(x = "Protein sequence",
            y = "Hamuro retention [Da]",
            color = "Peptide length")
     
-  })
-  output[["plot_FD_h_ret"]] <- renderPlot({
+    ggiraph::girafe(ggobj = plt, width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
     
-    ggplot(res_dat()) +
-      geom_segment(aes(x = Start, xend = End, y = h_ret, color = "h_ret"), size = 2) + 
-      geom_segment(aes(x = Start, xend = End, y = deut_uptake, color = "FD"), size = 2) + 
-      theme_bw(base_size = 18) +
+  })
+  
+  ##
+  
+  output[["plot_FD_h_ret"]] <- ggiraph::renderGirafe({
+    
+    plt <- ggplot(res_dat()) +
+      geom_segment(aes(x = Start, xend = End, 
+                                   y = h_ret, color = "h_ret"),
+                               size = 2) + 
+      geom_segment(aes(x = Start, xend = End, 
+                                   y = deut_uptake, color = "FD"),
+                               size = 2) + 
       theme(legend.position = "bottom") +
       labs(x = "Protein sequence",
            y = "[Da]",
            color = "Peptide length")
+    
+    ggiraph::girafe(ggobj = plt, width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
     
   })
   
@@ -206,27 +255,35 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
     
     ##
   
-  
-  output[["uc_scaled"]] <- renderPlot({
+  kin_dat_uc <- reactive({
+    
+    ## outside of uc_scaled item to ensure that the validate is shown
     
     validate(need(!is.null(input[["res_data_rows_selected"]]), "Select peptide from the table to see the plot."))
     
-    kin_dat <- HaDeX2::calculate_kinetics(dat = dat(),
-                                          state = settings()[["state"]], 
-                                          sequence = res_dat()[input[["res_data_rows_selected"]], "Sequence"],
-                                          start = res_dat()[input[["res_data_rows_selected"]], "Start"],
-                                          end = res_dat()[input[["res_data_rows_selected"]], "End"],
-                                          time_0 = settings()[["time_0"]], 
-                                          time_100 = settings()[["time_100"]])
+    ## TODO: change to splitteR function
+    HaDeX2::calculate_kinetics(dat = dat(),
+                               state = settings()[["state"]], 
+                               sequence = res_dat()[input[["res_data_rows_selected"]], "Sequence"],
+                               start = res_dat()[input[["res_data_rows_selected"]], "Start"],
+                               end = res_dat()[input[["res_data_rows_selected"]], "End"],
+                               time_0 = settings()[["time_0"]], 
+                               time_100 = settings()[["time_100"]])
     
+  })
+  
+  output[["uc_scaled"]] <- ggiraph::renderGirafe({
     
     ret_scale <- res_dat()[input[["res_data_rows_selected"]], settings()[["rescaling_value"]] ]
     
-    splitteR::plot_uc_scaled(kin_dat = kin_dat, 
+    plt <- splitteR::plot_uc_scaled(kin_dat = kin_dat_uc(), 
                    state = settings()[["state"]],
-                   ret = ret_scale) +
-      ggplot2::theme_bw(base_size = 18) +
+                   ret = ret_scale, 
+                   interactive = TRUE) +
+      # ggplot2::theme_bw(base_size = 18) +
       ggplot2::theme(legend.position = "bottom") 
+    
+    ggiraph::girafe(ggobj = plt, width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
     
   })
   
@@ -240,13 +297,17 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
   
   
   
-  output[["standard_bex"]] <- renderPlot({
+  output[["standard_bex"]] <- ggiraph::renderGirafe({
+    
+    ## ADD TOOLTIPS
     
     bex_dat <- calculate_back_exchange(dat = dat(), 
                                        states = settings()[["state"]],
                                        time_100 = settings()[["time_100"]])
     
-    splitteR::plot_comparison_backexchange(bex_dat)
+    plt <- splitteR::plot_comparison_backexchange(bex_dat)
+    
+    ggiraph::girafe(ggobj = plt, width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
     
     # HaDeX2::plot_coverage_heatmap(bex_dat, 
     #                               value = "back_exchange")

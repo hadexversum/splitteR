@@ -79,6 +79,7 @@ golem_add_external_resources <- function() {
   library(bslib)
   library(shinyjs)
   library(glue)
+  library(ggiraph)
   
   tags$head(
     favicon(),
