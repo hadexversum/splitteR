@@ -322,7 +322,8 @@ mod_rescale_server <- function(id, dat, settings, dat_rt){
                                        states = settings()[["state"]],
                                        time_100 = settings()[["time_100"]])
     
-    plt <- splitteR::plot_comparison_backexchange(bex_dat)
+    plt <- splitteR::plot_comparison_backexchange(bex_dat,
+                                                  interactive = TRUE)
     
     ggiraph::girafe(ggobj = plt, width_svg = 9, height_svg = 5, opts_sizing(rescale = TRUE))
     
